@@ -4,6 +4,7 @@ import state
 import geometry
 import draw
 import history
+import i18n
 
 # ── Button themes ─────────────────────────────────────────────────────────────
 _sel_btn_theme = None
@@ -27,7 +28,7 @@ def refresh_layers() -> None:
         return
     dpg.delete_item("layer_list", children_only=True)
     for i, el in enumerate(state.st["elements"]):
-        label = el.get("text") or el.get("desc", "—")
+        label = el.get("text") or el.get("desc") or i18n.t("layer_empty_label")
         typ   = "T" if el["type"] == "text" else "O"
         col_t = (80, 160, 255, 255) if typ == "T" else (60, 210, 110, 255)
         sel   = (i == state.st["selected"])
@@ -57,11 +58,11 @@ def refresh_props() -> None:
     dpg.delete_item("props_group", children_only=True)
     i = state.st["selected"]
     if i < 0 or i >= len(state.st["elements"]):
-        dpg.add_text("← Выбери слой", parent="props_group", color=(160, 160, 160, 255))
+        dpg.add_text(i18n.t("props_no_selection"), parent="props_group", color=(160, 160, 160, 255))
         return
 
     el = state.st["elements"][i]
-    dpg.add_text(f"Слой #{i}", parent="props_group", color=(220, 220, 100, 255))
+    dpg.add_text(i18n.t("props_layer_title", index=i), parent="props_group", color=(220, 220, 100, 255))
     dpg.add_separator(parent="props_group")
 
     def set_type(_, val):
@@ -73,7 +74,7 @@ def refresh_props() -> None:
         refresh_layers()
         draw.redraw()
 
-    dpg.add_text("Тип:", parent="props_group")
+    dpg.add_text(i18n.t("props_type_label"), parent="props_group")
     dpg.add_radio_button(
         ["text", "obj"],
         default_value=el["type"],
@@ -84,13 +85,13 @@ def refresh_props() -> None:
     dpg.add_separator(parent="props_group")
 
     if el["type"] == "text":
-        dpg.add_text("Текст:", parent="props_group")
+        dpg.add_text(i18n.t("props_text_label"), parent="props_group")
 
         def cb_text(s, v):
             el["text"] = v
             btn_tag = f"layer_btn_{state.st['selected']}"
             if dpg.does_item_exist(btn_tag):
-                dpg.set_item_label(btn_tag, (v or "—")[:18])
+                dpg.set_item_label(btn_tag, (v or i18n.t("layer_empty_label"))[:18])
             draw.redraw()
 
         dpg.add_input_text(
@@ -101,14 +102,14 @@ def refresh_props() -> None:
             parent="props_group",
         )
 
-    dpg.add_text("Описание (desc):", parent="props_group")
+    dpg.add_text(i18n.t("props_desc_label"), parent="props_group")
 
     def cb_desc(s, v):
         el["desc"] = v
         if el.get("type") != "text":
             btn_tag = f"layer_btn_{state.st['selected']}"
             if dpg.does_item_exist(btn_tag):
-                dpg.set_item_label(btn_tag, (v or "—")[:18])
+                dpg.set_item_label(btn_tag, (v or i18n.t("layer_empty_label"))[:18])
         draw.redraw()
 
     dpg.add_input_text(
@@ -122,7 +123,7 @@ def refresh_props() -> None:
     )
 
     dpg.add_separator(parent="props_group")
-    dpg.add_text("BBox  [ymin xmin ymax xmax]  0–1000:", parent="props_group")
+    dpg.add_text(i18n.t("props_bbox_label"), parent="props_group")
     bbox = el["bbox"]
 
     def make_bbox_cb(idx):
@@ -145,7 +146,7 @@ def refresh_props() -> None:
                 )
 
     dpg.add_separator(parent="props_group")
-    dpg.add_text("Color palette (hex через запятую):", parent="props_group")
+    dpg.add_text(i18n.t("props_palette_label"), parent="props_group")
     pal_str = ", ".join(el.get("color_palette", []))
 
     def cb_pal(s, v):

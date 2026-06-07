@@ -3,6 +3,7 @@ import dearpygui.dearpygui as dpg
 import state
 import config
 import geometry
+import i18n
 
 
 def redraw() -> None:
@@ -62,6 +63,6 @@ def redraw() -> None:
     if state.st["add_mode"]:
         dpg.draw_text(
             [4, ch - 18],
-            f"Рисуй bbox [{state.st['add_mode']}]  (Esc = отмена)",
+            i18n.t("canvas_draw_hint", mode=state.st["add_mode"]),
             color=(255, 200, 50, 220), size=12, parent="canvas_dl",
         )
