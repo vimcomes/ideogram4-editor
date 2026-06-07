@@ -17,10 +17,6 @@ def _save_file(s, u):
         dpg.show_item("save_dlg")
 
 
-def _on_style_toggle(sender, app_data) -> None:
-    state.g_style_open = not state.g_style_open
-    state.g_fields_h = 215 if state.g_style_open else 130
-
 
 def refresh_ui_strings() -> None:
     """Update all tagged static UI items to the current language."""
@@ -200,7 +196,6 @@ def build_ui() -> None:
                                     label=i18n.t("field_style"),
                                     tag="ui_style_header",
                                     default_open=True,
-                                    callback=_on_style_toggle,
                                 ):
                                     dpg.add_text(i18n.t("field_style_aesthetics"), tag="ui_text_style_aesthetics")
                                     dpg.add_input_text(tag="inp_style_aesthetics", width=-1, default_value="")

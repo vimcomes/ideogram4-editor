@@ -51,6 +51,14 @@ while dpg.is_dearpygui_running():
         _prev_vp = (vw, vh)
 
     if dpg.does_item_exist("panel_mid"):
+        # Detect collapsing_header open/closed by checking child widget visibility
+        if dpg.does_item_exist("inp_style_aesthetics"):
+            try:
+                visible = dpg.get_item_state("inp_style_aesthetics").get("visible", True)
+                state.g_fields_h = 215 if visible else 130
+            except Exception:
+                pass
+
         fields_h = state.g_fields_h
 
         if fields_h != _prev_fields_h:
