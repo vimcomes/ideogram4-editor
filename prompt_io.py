@@ -97,6 +97,40 @@ def on_open_selected(sender, app_data):
         state.set_status(i18n.t("status_error_open", err=e))
 
 
+def _do_save(path: str) -> None:
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(build_prompt(), f, ensure_ascii=False, indent=2)
+        state.set_status(i18n.t("status_saved", path=path))
+    except Exception as e:
+        state.set_status(i18n.t("status_error_save", err=e))
+
+
+def _show_overwrite_confirm(path: str) -> None:
+    tag = "overwrite_dlg"
+    if dpg.does_item_exist(tag):
+        dpg.delete_item(tag)
+    vw = dpg.get_viewport_width()
+    vh = dpg.get_viewport_height()
+    with dpg.window(
+        tag=tag, modal=True, no_close=True,
+        label=i18n.t("dialog_overwrite_title"),
+        width=320, height=110,
+        pos=(vw // 2 - 160, vh // 2 - 55),
+    ):
+        dpg.add_text(i18n.t("dialog_overwrite_msg", name=os.path.basename(path)))
+        dpg.add_separator()
+        with dpg.group(horizontal=True):
+            dpg.add_button(
+                label=i18n.t("dialog_overwrite_yes"), width=100,
+                callback=lambda s, u: (dpg.delete_item(tag), _do_save(path)),
+            )
+            dpg.add_button(
+                label=i18n.t("dialog_overwrite_no"), width=100,
+                callback=lambda s, u: dpg.delete_item(tag),
+            )
+
+
 def on_save_selected(sender, app_data):
     selections = app_data.get("selections", {})
     path = next(iter(selections.values())) if selections else app_data.get("file_path_name", "")
@@ -105,9 +139,7 @@ def on_save_selected(sender, app_data):
         return
     if not path.endswith(".json"):
         path += ".json"
-    try:
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(build_prompt(), f, ensure_ascii=False, indent=2)
-        state.set_status(i18n.t("status_saved", path=path))
-    except Exception as e:
-        state.set_status(i18n.t("status_error_save", err=e))
+    if os.path.isfile(path):
+        _show_overwrite_confirm(path)
+    else:
+        _do_save(path)

@@ -40,6 +40,10 @@ _STRINGS: dict[str, dict[str, str]] = {
         # File dialogs
         "dialog_open_title":       "Открыть промпт",
         "dialog_save_title":       "Сохранить промпт",
+        "dialog_overwrite_title":  "Файл существует",
+        "dialog_overwrite_msg":    "Перезаписать файл?\n{name}",
+        "dialog_overwrite_yes":    "Да",
+        "dialog_overwrite_no":     "Отмена",
         "file_filter_all":         "Все файлы",
         "file_filter_json":        "JSON промпт",
         "file_filter_txt":         "TXT + JSON",
@@ -102,6 +106,10 @@ _STRINGS: dict[str, dict[str, str]] = {
         # File dialogs
         "dialog_open_title":       "Open prompt",
         "dialog_save_title":       "Save prompt",
+        "dialog_overwrite_title":  "File exists",
+        "dialog_overwrite_msg":    "Overwrite file?\n{name}",
+        "dialog_overwrite_yes":    "Yes",
+        "dialog_overwrite_no":     "Cancel",
         "file_filter_all":         "All files",
         "file_filter_json":        "JSON prompt",
         "file_filter_txt":         "TXT + JSON",
