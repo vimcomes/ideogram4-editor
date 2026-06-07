@@ -64,7 +64,7 @@ def build_ui() -> None:
     with dpg.window(
         tag="overwrite_dlg",
         label=i18n.t("dialog_overwrite_title"),
-        modal=True, show=False, no_close=True,
+        show=False, no_close=True,
         width=340, height=115,
         no_move=True, no_resize=True, no_collapse=True,
     ):
