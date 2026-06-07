@@ -16,10 +16,10 @@ with dpg.font_registry():
         dpg.add_font_range_hint(dpg.mvFontRangeHint_Default)
 
 with dpg.handler_registry():
-    dpg.add_mouse_click_handler(button=0,   callback=handlers.on_mouse_press)
-    dpg.add_mouse_release_handler(button=0, callback=handlers.on_mouse_release)
-    dpg.add_mouse_move_handler(             callback=handlers.on_mouse_move)
-    dpg.add_key_press_handler(              callback=handlers.on_key_press)
+    dpg.add_mouse_down_handler(button=0,     callback=handlers.on_mouse_down)
+    dpg.add_mouse_move_handler(              callback=handlers.on_mouse_move)
+    dpg.add_mouse_release_handler(button=0,  callback=handlers.on_mouse_release)
+    dpg.add_key_press_handler(               callback=handlers.on_key_press)
 
 ui.build_ui()
 
@@ -38,8 +38,6 @@ dpg.maximize_viewport()
 handlers.on_preset(None, state.PRESET_NAMES[3])
 
 # ── Render loop ───────────────────────────────────────────────────────────────
-# DPG 2.x: child_windows lack rect_min in get_item_state; use content_region_avail
-# instead. Drawlists do have rect_min — use it for the canvas origin.
 _prev_dl = (0, 0)
 _prev_vp = (0, 0)
 
@@ -47,17 +45,14 @@ while dpg.is_dearpygui_running():
     vw = dpg.get_viewport_width()
     vh = dpg.get_viewport_height()
 
-    # Sync main window and table height to viewport
     if (vw, vh) != _prev_vp:
         dpg.configure_item("main", width=vw, height=vh)
         dpg.configure_item("main_table", height=vh - 68)
         _prev_vp = (vw, vh)
 
-    # Sync canvas_dl size using panel_mid content_region_avail
     if dpg.does_item_exist("panel_mid"):
         try:
             avail = dpg.get_item_state("panel_mid")["content_region_avail"]
-            # fields_panel=215, separator≈4, item-spacing≈10
             mid_w = max(200, int(avail[0]) - 4)
             mid_h = max(200, int(avail[1]) - 215 - 14)
         except Exception:
@@ -72,7 +67,6 @@ while dpg.is_dearpygui_running():
             import draw
             draw.redraw()
 
-        # Canvas absolute position — canvas_dl has rect_min in DPG 2.3.1
         try:
             rm = dpg.get_item_state("canvas_dl")["rect_min"]
             state.g_dl_ox = int(rm[0])

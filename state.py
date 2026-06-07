@@ -12,6 +12,7 @@ st: dict = {
     "add_mode": None,
     "drag": None,
     "draw_start": None,
+    "pressed": False,
     "status": "",
 }
 
