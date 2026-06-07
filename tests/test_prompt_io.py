@@ -148,16 +148,38 @@ def test_on_save_adds_json_extension():
     dpg.get_value.side_effect = lambda tag: ""
     state.st["elements"] = []
 
-    saved_paths = []
     real_open = open
 
-    with patch("builtins.open", side_effect=lambda p, *a, **kw: real_open(p, *a, **kw)) as mock_open:
+    with patch("builtins.open", side_effect=lambda p, *a, **kw: real_open(p, *a, **kw)):
         with tempfile.TemporaryDirectory() as tmpdir:
             path_no_ext = os.path.join(tmpdir, "myprompt")
+            # Old-style app_data (no current_path/file_name) → fallback branch
             app_data = {"selections": {path_no_ext: path_no_ext}, "file_path_name": path_no_ext}
             prompt_io.on_save_selected(None, app_data)
-            expected = path_no_ext + ".json"
-            assert os.path.exists(expected)
+            assert os.path.exists(path_no_ext + ".json")
+
+
+def test_on_save_dpg_filter_artifact_in_filename():
+    """DPG embeds active filter pattern into file_name (e.g. 'prompt.*.*').
+    _resolve_save_path must strip the artifact and produce a clean .json path."""
+    import dearpygui.dearpygui as dpg
+    dpg.get_value.side_effect = lambda tag: ""
+    state.st["elements"] = []
+
+    real_open = open
+
+    with patch("builtins.open", side_effect=lambda p, *a, **kw: real_open(p, *a, **kw)):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Realistic DPG app_data with filter noise
+            app_data = {
+                "current_path": tmpdir,
+                "file_name": "myprompt.*.*",
+                "file_path_name": os.path.join(tmpdir, "myprompt.*.*"),
+                "current_filter": ".*",
+                "selections": {},
+            }
+            prompt_io.on_save_selected(None, app_data)
+            assert os.path.exists(os.path.join(tmpdir, "myprompt.json"))
 
 
 def test_on_save_no_path_sets_status():

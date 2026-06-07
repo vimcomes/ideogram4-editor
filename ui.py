@@ -60,6 +60,27 @@ def _tooltip(parent, text: str) -> None:
 
 
 def build_ui() -> None:
+    # ── Overwrite confirmation dialog (pre-built, show/hide) ──────────────────
+    with dpg.window(
+        tag="overwrite_dlg",
+        label=i18n.t("dialog_overwrite_title"),
+        modal=True, show=False, no_close=True,
+        width=340, height=115,
+        no_move=True, no_resize=True, no_collapse=True,
+    ):
+        dpg.add_text("", tag="overwrite_dlg_text", wrap=320)
+        dpg.add_separator()
+        with dpg.group(horizontal=True):
+            dpg.add_button(
+                tag="overwrite_dlg_yes", label=i18n.t("dialog_overwrite_yes"),
+                width=100,
+                callback=lambda s, u: prompt_io.confirm_overwrite(),
+            )
+            dpg.add_button(
+                label=i18n.t("dialog_overwrite_no"), width=100,
+                callback=lambda s, u: dpg.configure_item("overwrite_dlg", show=False),
+            )
+
     # ── File dialogs ──────────────────────────────────────────────────────────
     with dpg.file_dialog(
         tag="open_dlg",

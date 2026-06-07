@@ -97,6 +97,9 @@ def on_open_selected(sender, app_data):
         state.set_status(i18n.t("status_error_open", err=e))
 
 
+_pending_save_path: str = ""
+
+
 def _do_save(path: str) -> None:
     try:
         with open(path, "w", encoding="utf-8") as f:
@@ -106,39 +109,56 @@ def _do_save(path: str) -> None:
         state.set_status(i18n.t("status_error_save", err=e))
 
 
+def confirm_overwrite() -> None:
+    """Called by the Yes button in the pre-built overwrite dialog."""
+    dpg.configure_item("overwrite_dlg", show=False)
+    _do_save(_pending_save_path)
+
+
 def _show_overwrite_confirm(path: str) -> None:
-    tag = "overwrite_dlg"
-    if dpg.does_item_exist(tag):
-        dpg.delete_item(tag)
+    global _pending_save_path
+    _pending_save_path = path
+    dpg.set_value("overwrite_dlg_text", i18n.t("dialog_overwrite_msg", name=os.path.basename(path)))
     vw = dpg.get_viewport_width()
     vh = dpg.get_viewport_height()
-    with dpg.window(
-        tag=tag, modal=True, no_close=True,
-        label=i18n.t("dialog_overwrite_title"),
-        width=320, height=110,
-        pos=(vw // 2 - 160, vh // 2 - 55),
-    ):
-        dpg.add_text(i18n.t("dialog_overwrite_msg", name=os.path.basename(path)))
-        dpg.add_separator()
-        with dpg.group(horizontal=True):
-            dpg.add_button(
-                label=i18n.t("dialog_overwrite_yes"), width=100,
-                callback=lambda s, u: (dpg.delete_item(tag), _do_save(path)),
-            )
-            dpg.add_button(
-                label=i18n.t("dialog_overwrite_no"), width=100,
-                callback=lambda s, u: dpg.delete_item(tag),
-            )
+    dpg.configure_item("overwrite_dlg",
+                        show=True,
+                        pos=(vw // 2 - 170, vh // 2 - 57))
 
 
-def on_save_selected(sender, app_data):
+def _resolve_save_path(app_data: dict) -> str:
+    """Extract and clean the save path from file_dialog app_data.
+
+    DPG embeds the active filter pattern into file_name (e.g. 'prompt.*.*').
+    When current_path + file_name are present we clean the filter noise;
+    otherwise fall back to selections / file_path_name (e.g. in tests).
+    """
+    import re
+    current_path = app_data.get("current_path", "")
+    file_name    = app_data.get("file_name", "")
+
+    if current_path and file_name:
+        # Strip filter artifacts: everything from the first '*' onward + trailing dots
+        stem = re.sub(r"\*.*", "", file_name).rstrip(".")
+        if stem:
+            name = stem if stem.endswith(".json") else stem + ".json"
+            return os.path.join(current_path, name)
+
+    # Fallback: selections dict or raw file_path_name (no filter artifacts)
     selections = app_data.get("selections", {})
     path = next(iter(selections.values())) if selections else app_data.get("file_path_name", "")
     if not path:
-        state.set_status(i18n.t("status_no_path"))
-        return
+        return ""
     if not path.endswith(".json"):
         path += ".json"
+    return path
+
+
+def on_save_selected(sender, app_data):
+    path = _resolve_save_path(app_data)
+    if not path:
+        state.set_status(i18n.t("status_no_path"))
+        return
     if os.path.isfile(path):
         _show_overwrite_confirm(path)
     else:
