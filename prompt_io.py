@@ -19,12 +19,24 @@ def _parse_file(path: str) -> dict:
 
 def _load_data(data: dict) -> None:
     dpg.set_value("inp_high", data.get("high_level_description", ""))
-    style = data.get("style_description", "")
-    dpg.set_value(
-        "inp_style",
-        json.dumps(style, ensure_ascii=False, indent=2)
-        if isinstance(style, dict) else str(style),
-    )
+
+    style = data.get("style_description", {})
+    if isinstance(style, dict):
+        dpg.set_value("inp_style_aesthetics", style.get("aesthetics", ""))
+        dpg.set_value("inp_style_lighting",   style.get("lighting", ""))
+        dpg.set_value("inp_style_art_style",  style.get("art_style", ""))
+        dpg.set_value("inp_style_medium",     style.get("medium", ""))
+        palette = style.get("color_palette", [])
+        dpg.set_value("inp_style_palette",
+                      ", ".join(palette) if isinstance(palette, list) else str(palette))
+    else:
+        # Fallback: plain string → put in aesthetics
+        dpg.set_value("inp_style_aesthetics", str(style) if style else "")
+        dpg.set_value("inp_style_lighting",   "")
+        dpg.set_value("inp_style_art_style",  "")
+        dpg.set_value("inp_style_medium",     "")
+        dpg.set_value("inp_style_palette",    "")
+
     dpg.set_value(
         "inp_bg",
         data.get("compositional_deconstruction", {}).get("background", ""),
@@ -37,14 +49,23 @@ def _load_data(data: dict) -> None:
 
 
 def build_prompt() -> dict:
-    style_raw = dpg.get_value("inp_style").strip()
-    try:
-        style_val = json.loads(style_raw)
-    except Exception:
-        style_val = style_raw
+    style: dict = {}
+    for key, tag in [
+        ("aesthetics", "inp_style_aesthetics"),
+        ("lighting",   "inp_style_lighting"),
+        ("art_style",  "inp_style_art_style"),
+        ("medium",     "inp_style_medium"),
+    ]:
+        val = dpg.get_value(tag).strip()
+        if val:
+            style[key] = val
+    palette_raw = dpg.get_value("inp_style_palette").strip()
+    if palette_raw:
+        style["color_palette"] = [c.strip() for c in palette_raw.split(",") if c.strip()]
+
     return {
         "high_level_description": dpg.get_value("inp_high"),
-        "style_description": style_val,
+        "style_description": style,
         "compositional_deconstruction": {
             "background": dpg.get_value("inp_bg"),
             "elements": [dict(el) for el in state.st["elements"]],

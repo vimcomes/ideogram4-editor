@@ -88,9 +88,13 @@ def test_parse_invalid_json_raises():
 def test_build_prompt_structure():
     import dearpygui.dearpygui as dpg
     dpg.get_value.side_effect = lambda tag: {
-        "inp_high": "A glamorous woman",
-        "inp_style": '{"lighting": "dramatic"}',
-        "inp_bg": "gradient black",
+        "inp_high":             "A glamorous woman",
+        "inp_style_aesthetics": "glossy editorial",
+        "inp_style_lighting":   "dramatic",
+        "inp_style_art_style":  "",
+        "inp_style_medium":     "",
+        "inp_style_palette":    "#CC0000, #FFFFFF",
+        "inp_bg":               "gradient black",
     }.get(tag, "")
 
     state.st["elements"] = [
@@ -101,19 +105,29 @@ def test_build_prompt_structure():
     assert result["high_level_description"] == "A glamorous woman"
     assert result["compositional_deconstruction"]["background"] == "gradient black"
     assert len(result["compositional_deconstruction"]["elements"]) == 1
+    style = result["style_description"]
+    assert isinstance(style, dict)
+    assert style["aesthetics"] == "glossy editorial"
+    assert style["lighting"] == "dramatic"
+    assert "art_style" not in style  # empty fields omitted
+    assert style["color_palette"] == ["#CC0000", "#FFFFFF"]
 
 
-def test_build_prompt_invalid_style_json_kept_as_string():
+def test_build_prompt_style_empty_fields_omitted():
     import dearpygui.dearpygui as dpg
     dpg.get_value.side_effect = lambda tag: {
-        "inp_high": "",
-        "inp_style": "not valid json {{{",
-        "inp_bg": "",
+        "inp_high":             "",
+        "inp_style_aesthetics": "",
+        "inp_style_lighting":   "",
+        "inp_style_art_style":  "",
+        "inp_style_medium":     "",
+        "inp_style_palette":    "",
+        "inp_bg":               "",
     }.get(tag, "")
 
     state.st["elements"] = []
     result = prompt_io.build_prompt()
-    assert isinstance(result["style_description"], str)
+    assert result["style_description"] == {}
 
 
 def test_build_prompt_elements_are_copies():

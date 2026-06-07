@@ -25,12 +25,16 @@ def refresh_ui_strings() -> None:
     }
     # Text widgets (add_text uses set_value)
     text_tags = {
-        "ui_text_resolution":   "toolbar_resolution",
-        "ui_text_layers_title": "panel_layers_title",
-        "ui_text_props_title":  "panel_props_title",
-        "ui_text_high_label":   "field_high_level",
-        "ui_text_style_label":  "field_style",
-        "ui_text_bg_label":     "field_background",
+        "ui_text_resolution":          "toolbar_resolution",
+        "ui_text_layers_title":        "panel_layers_title",
+        "ui_text_props_title":         "panel_props_title",
+        "ui_text_high_label":          "field_high_level",
+        "ui_text_style_aesthetics":    "field_style_aesthetics",
+        "ui_text_style_lighting":      "field_style_lighting",
+        "ui_text_style_art_style":     "field_style_art_style",
+        "ui_text_style_medium":        "field_style_medium",
+        "ui_text_style_palette":       "field_style_palette",
+        "ui_text_bg_label":            "field_background",
     }
     for tag, key in text_tags.items():
         if dpg.does_item_exist(tag):
@@ -38,15 +42,16 @@ def refresh_ui_strings() -> None:
 
     # Button/item labels (set_item_label)
     label_tags = {
-        "btn_copy":      "toolbar_btn_copy",
-        "btn_open":      "toolbar_btn_open",
-        "btn_save":      "toolbar_btn_save",
-        "btn_undo":      "toolbar_btn_undo",
-        "btn_add_text":  "toolbar_btn_add_text",
-        "btn_add_obj":   "toolbar_btn_add_obj",
-        "btn_move_up":   "toolbar_btn_move_up",
-        "btn_move_down": "toolbar_btn_move_down",
-        "btn_delete":    "toolbar_btn_delete",
+        "btn_copy":        "toolbar_btn_copy",
+        "btn_open":        "toolbar_btn_open",
+        "btn_save":        "toolbar_btn_save",
+        "btn_undo":        "toolbar_btn_undo",
+        "btn_add_text":    "toolbar_btn_add_text",
+        "btn_add_obj":     "toolbar_btn_add_obj",
+        "btn_move_up":     "toolbar_btn_move_up",
+        "btn_move_down":   "toolbar_btn_move_down",
+        "btn_delete":      "toolbar_btn_delete",
+        "ui_style_header": "field_style",
     }
     for tag, key in label_tags.items():
         if dpg.does_item_exist(tag):
@@ -162,20 +167,35 @@ def build_ui() -> None:
                         with dpg.child_window(
                             tag="fields_panel",
                             width=-1, height=215,
-                            border=False, no_scrollbar=True,
+                            border=False,
                         ):
                             dpg.add_text(i18n.t("field_high_level"), tag="ui_text_high_label")
                             dpg.add_input_text(
                                 tag="inp_high", width=-1,
-                                multiline=True, height=48, default_value="",
+                                multiline=True, height=52, default_value="",
                             )
-                            dpg.add_text(i18n.t("field_style"), tag="ui_text_style_label")
-                            dpg.add_input_text(
-                                tag="inp_style", width=-1,
-                                multiline=True, height=42, default_value="",
-                            )
+
+                            with dpg.collapsing_header(
+                                label=i18n.t("field_style"),
+                                tag="ui_style_header",
+                                default_open=True,
+                            ):
+                                dpg.add_text(i18n.t("field_style_aesthetics"), tag="ui_text_style_aesthetics")
+                                dpg.add_input_text(tag="inp_style_aesthetics", width=-1, default_value="")
+                                dpg.add_text(i18n.t("field_style_lighting"), tag="ui_text_style_lighting")
+                                dpg.add_input_text(tag="inp_style_lighting", width=-1, default_value="")
+                                dpg.add_text(i18n.t("field_style_art_style"), tag="ui_text_style_art_style")
+                                dpg.add_input_text(tag="inp_style_art_style", width=-1, default_value="")
+                                dpg.add_text(i18n.t("field_style_medium"), tag="ui_text_style_medium")
+                                dpg.add_input_text(tag="inp_style_medium", width=-1, default_value="")
+                                dpg.add_text(i18n.t("field_style_palette"), tag="ui_text_style_palette")
+                                dpg.add_input_text(tag="inp_style_palette", width=-1, default_value="")
+
                             dpg.add_text(i18n.t("field_background"), tag="ui_text_bg_label")
-                            dpg.add_input_text(tag="inp_bg", width=-1, default_value="")
+                            dpg.add_input_text(
+                                tag="inp_bg", width=-1,
+                                multiline=True, height=40, default_value="",
+                            )
 
                 # ── RIGHT: properties ─────────────────────────────────────────
                 with dpg.table_cell():
