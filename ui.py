@@ -78,7 +78,7 @@ def build_ui() -> None:
             )
             dpg.add_button(
                 label=i18n.t("dialog_overwrite_no"), width=100,
-                callback=lambda s, u: dpg.configure_item("overwrite_dlg", show=False),
+                callback=lambda s, u: dpg.hide_item("overwrite_dlg"),
             )
 
     # ── File dialogs ──────────────────────────────────────────────────────────

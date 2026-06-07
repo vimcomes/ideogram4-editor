@@ -111,7 +111,7 @@ def _do_save(path: str) -> None:
 
 def confirm_overwrite() -> None:
     """Called by the Yes button in the pre-built overwrite dialog."""
-    dpg.configure_item("overwrite_dlg", show=False)
+    dpg.hide_item("overwrite_dlg")
     _do_save(_pending_save_path)
 
 
@@ -119,11 +119,7 @@ def _show_overwrite_confirm(path: str) -> None:
     global _pending_save_path
     _pending_save_path = path
     dpg.set_value("overwrite_dlg_text", i18n.t("dialog_overwrite_msg", name=os.path.basename(path)))
-    vw = dpg.get_viewport_width()
-    vh = dpg.get_viewport_height()
-    dpg.configure_item("overwrite_dlg",
-                        show=True,
-                        pos=(vw // 2 - 170, vh // 2 - 57))
+    dpg.show_item("overwrite_dlg")
 
 
 def _resolve_save_path(app_data: dict) -> str:
