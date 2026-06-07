@@ -7,6 +7,7 @@ import draw
 import panels
 import history
 import prompt_io
+import i18n
 
 
 # ── Focus helpers ─────────────────────────────────────────────────────────────
@@ -60,12 +61,11 @@ def on_mouse_release(sender, app_data):
                 el["text"] = ""
             state.st["elements"].append(el)
             state.st["selected"] = len(state.st["elements"]) - 1
-            # refresh layers and props first, then clear state and redraw
             panels.refresh_layers()
             panels.refresh_props()
         state.st["draw_start"] = None
         state.st["add_mode"] = None
-        state.set_status("Готов.")
+        state.set_status(i18n.t("status_ready"))
         draw.redraw()
         return
     state.st["drag"] = None
@@ -114,7 +114,7 @@ def on_key_press(sender, key):
         if not _input_has_focus():
             state.st["add_mode"] = None
             state.st["draw_start"] = None
-            state.set_status("Готов.")
+            state.set_status(i18n.t("status_ready"))
             draw.redraw()
     elif key == dpg.mvKey_Z:
         ctrl = dpg.is_key_down(dpg.mvKey_LControl) or dpg.is_key_down(dpg.mvKey_RControl)
@@ -125,12 +125,12 @@ def on_key_press(sender, key):
 # ── Toolbar callbacks ─────────────────────────────────────────────────────────
 def add_text(s, u):
     state.st["add_mode"] = "text"
-    state.set_status("Нарисуй bbox для [text]  (Esc = отмена)")
+    state.set_status(i18n.t("status_draw_text"))
 
 
 def add_obj(s, u):
     state.st["add_mode"] = "obj"
-    state.set_status("Нарисуй bbox для [obj]  (Esc = отмена)")
+    state.set_status(i18n.t("status_draw_obj"))
 
 
 def del_selected(s, u):
@@ -173,3 +173,12 @@ def on_preset(s, name):
             state.st["img_w"], state.st["img_h"] = p["w"], p["h"]
             break
     draw.redraw()
+
+
+def on_lang_change(s, lang_name: str) -> None:
+    """Called when user picks a different language from the toolbar combo."""
+    i18n.set_lang(lang_name)
+    import ui
+    ui.refresh_ui_strings()
+    panels.refresh_all()
+    state.set_status(i18n.t("status_initial"))
