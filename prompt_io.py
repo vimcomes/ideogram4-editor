@@ -19,12 +19,24 @@ def _parse_file(path: str) -> dict:
 
 def _load_data(data: dict) -> None:
     dpg.set_value("inp_high", data.get("high_level_description", ""))
-    style = data.get("style_description", "")
-    dpg.set_value(
-        "inp_style",
-        json.dumps(style, ensure_ascii=False, indent=2)
-        if isinstance(style, dict) else str(style),
-    )
+
+    style = data.get("style_description", {})
+    if isinstance(style, dict):
+        dpg.set_value("inp_style_aesthetics", style.get("aesthetics", ""))
+        dpg.set_value("inp_style_lighting",   style.get("lighting", ""))
+        dpg.set_value("inp_style_art_style",  style.get("art_style", ""))
+        dpg.set_value("inp_style_medium",     style.get("medium", ""))
+        palette = style.get("color_palette", [])
+        dpg.set_value("inp_style_palette",
+                      ", ".join(palette) if isinstance(palette, list) else str(palette))
+    else:
+        # Fallback: plain string → put in aesthetics
+        dpg.set_value("inp_style_aesthetics", str(style) if style else "")
+        dpg.set_value("inp_style_lighting",   "")
+        dpg.set_value("inp_style_art_style",  "")
+        dpg.set_value("inp_style_medium",     "")
+        dpg.set_value("inp_style_palette",    "")
+
     dpg.set_value(
         "inp_bg",
         data.get("compositional_deconstruction", {}).get("background", ""),
@@ -37,14 +49,23 @@ def _load_data(data: dict) -> None:
 
 
 def build_prompt() -> dict:
-    style_raw = dpg.get_value("inp_style").strip()
-    try:
-        style_val = json.loads(style_raw)
-    except Exception:
-        style_val = style_raw
+    style: dict = {}
+    for key, tag in [
+        ("aesthetics", "inp_style_aesthetics"),
+        ("lighting",   "inp_style_lighting"),
+        ("art_style",  "inp_style_art_style"),
+        ("medium",     "inp_style_medium"),
+    ]:
+        val = dpg.get_value(tag).strip()
+        if val:
+            style[key] = val
+    palette_raw = dpg.get_value("inp_style_palette").strip()
+    if palette_raw:
+        style["color_palette"] = [c.strip() for c in palette_raw.split(",") if c.strip()]
+
     return {
         "high_level_description": dpg.get_value("inp_high"),
-        "style_description": style_val,
+        "style_description": style,
         "compositional_deconstruction": {
             "background": dpg.get_value("inp_bg"),
             "elements": [dict(el) for el in state.st["elements"]],
@@ -76,17 +97,67 @@ def on_open_selected(sender, app_data):
         state.set_status(i18n.t("status_error_open", err=e))
 
 
-def on_save_selected(sender, app_data):
-    selections = app_data.get("selections", {})
-    path = next(iter(selections.values())) if selections else app_data.get("file_path_name", "")
-    if not path:
-        state.set_status(i18n.t("status_no_path"))
-        return
-    if not path.endswith(".json"):
-        path += ".json"
+_pending_save_path: str = ""
+
+
+def _do_save(path: str) -> None:
     try:
         with open(path, "w", encoding="utf-8") as f:
             json.dump(build_prompt(), f, ensure_ascii=False, indent=2)
         state.set_status(i18n.t("status_saved", path=path))
     except Exception as e:
         state.set_status(i18n.t("status_error_save", err=e))
+
+
+def confirm_overwrite() -> None:
+    """Called by the Yes button in the pre-built overwrite dialog."""
+    dpg.hide_item("overwrite_dlg")
+    _do_save(_pending_save_path)
+
+
+def _show_overwrite_confirm(path: str) -> None:
+    global _pending_save_path
+    _pending_save_path = path
+    dpg.set_value("overwrite_dlg_text", i18n.t("dialog_overwrite_msg", name=os.path.basename(path)))
+    vw, vh = dpg.get_viewport_width(), dpg.get_viewport_height()
+    dpg.set_item_pos("overwrite_dlg", [vw // 2 - 170, vh // 2 - 57])
+    dpg.show_item("overwrite_dlg")
+
+
+def _resolve_save_path(app_data: dict) -> str:
+    """Extract and clean the save path from file_dialog app_data.
+
+    DPG embeds the active filter pattern into file_name (e.g. 'prompt.*.*').
+    When current_path + file_name are present we clean the filter noise;
+    otherwise fall back to selections / file_path_name (e.g. in tests).
+    """
+    import re
+    current_path = app_data.get("current_path", "")
+    file_name    = app_data.get("file_name", "")
+
+    if current_path and file_name:
+        # Strip filter artifacts: everything from the first '*' onward + trailing dots
+        stem = re.sub(r"\*.*", "", file_name).rstrip(".")
+        if stem:
+            name = stem if stem.endswith(".json") else stem + ".json"
+            return os.path.join(current_path, name)
+
+    # Fallback: selections dict or raw file_path_name (no filter artifacts)
+    selections = app_data.get("selections", {})
+    path = next(iter(selections.values())) if selections else app_data.get("file_path_name", "")
+    if not path:
+        return ""
+    if not path.endswith(".json"):
+        path += ".json"
+    return path
+
+
+def on_save_selected(sender, app_data):
+    path = _resolve_save_path(app_data)
+    if not path:
+        state.set_status(i18n.t("status_no_path"))
+        return
+    if os.path.isfile(path):
+        _show_overwrite_confirm(path)
+    else:
+        _do_save(path)

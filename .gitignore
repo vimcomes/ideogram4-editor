@@ -15,3 +15,6 @@ prompts/
 *.swp
 *~
 .DS_Store
+
+# Analysis output
+graphify-out/

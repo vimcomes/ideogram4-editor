@@ -6,15 +6,16 @@ _STRINGS: dict[str, dict[str, str]] = {
         "app_title":               "Ideogram4 Layout Editor",
         # Toolbar
         "toolbar_resolution":      "Разрешение:",
-        "toolbar_btn_copy":        "📋 Копировать JSON",
-        "toolbar_btn_open":        "📂 Открыть",
-        "toolbar_btn_save":        "💾 Сохранить",
-        "toolbar_btn_undo":        "↩ Undo (Ctrl+Z)",
-        "toolbar_btn_add_text":    "+ T",
-        "toolbar_btn_add_obj":     "+ O",
-        "toolbar_btn_move_up":     "↑ Выше",
-        "toolbar_btn_move_down":   "↓ Ниже",
-        "toolbar_btn_delete":      "✕ Удалить",
+        "toolbar_btn_new":         "□",
+        "toolbar_btn_copy":        "❐",
+        "toolbar_btn_open":        "△",
+        "toolbar_btn_save":        "▽",
+        "toolbar_btn_undo":        "↩",
+        "toolbar_btn_add_text":    "⊕T",
+        "toolbar_btn_add_obj":     "⊕O",
+        "toolbar_btn_move_up":     "↑",
+        "toolbar_btn_move_down":   "↓",
+        "toolbar_btn_delete":      "✕",
         # Layer panel
         "panel_layers_title":      "Слои",
         # Properties panel
@@ -28,18 +29,28 @@ _STRINGS: dict[str, dict[str, str]] = {
         "props_palette_label":     "Color palette (hex через запятую):",
         "layer_empty_label":       "—",
         # Fields (middle panel)
-        "field_high_level":        "High-level description:",
-        "field_style":             "Style description (JSON):",
-        "field_background":        "Background:",
+        "field_high_level":           "High-level description:",
+        "field_style":                "Style description",
+        "field_style_aesthetics":     "Aesthetics:",
+        "field_style_lighting":       "Lighting:",
+        "field_style_art_style":      "Art style:",
+        "field_style_medium":         "Medium:",
+        "field_style_palette":        "Color palette (hex через запятую):",
+        "field_background":           "Background:",
         # File dialogs
         "dialog_open_title":       "Открыть промпт",
         "dialog_save_title":       "Сохранить промпт",
+        "dialog_overwrite_title":  "Файл существует",
+        "dialog_overwrite_msg":    "Перезаписать файл?\n{name}",
+        "dialog_overwrite_yes":    "Да",
+        "dialog_overwrite_no":     "Отмена",
         "file_filter_all":         "Все файлы",
         "file_filter_json":        "JSON промпт",
         "file_filter_txt":         "TXT + JSON",
         # Status messages
         "status_initial":          "Ctrl+Z = undo  |  Esc = отмена режима рисования",
         "status_ready":            "Готов.",
+        "status_new":              "Новый документ.",
         "status_draw_text":        "Нарисуй bbox для [text]  (Esc = отмена)",
         "status_draw_obj":         "Нарисуй bbox для [obj]  (Esc = отмена)",
         "status_undo_empty":       "Нечего отменять.",
@@ -61,15 +72,16 @@ _STRINGS: dict[str, dict[str, str]] = {
         "app_title":               "Ideogram4 Layout Editor",
         # Toolbar
         "toolbar_resolution":      "Resolution:",
-        "toolbar_btn_copy":        "📋 Copy JSON",
-        "toolbar_btn_open":        "📂 Open",
-        "toolbar_btn_save":        "💾 Save",
-        "toolbar_btn_undo":        "↩ Undo (Ctrl+Z)",
-        "toolbar_btn_add_text":    "+ T",
-        "toolbar_btn_add_obj":     "+ O",
-        "toolbar_btn_move_up":     "↑ Up",
-        "toolbar_btn_move_down":   "↓ Down",
-        "toolbar_btn_delete":      "✕ Delete",
+        "toolbar_btn_new":         "□",
+        "toolbar_btn_copy":        "❐",
+        "toolbar_btn_open":        "△",
+        "toolbar_btn_save":        "▽",
+        "toolbar_btn_undo":        "↩",
+        "toolbar_btn_add_text":    "⊕T",
+        "toolbar_btn_add_obj":     "⊕O",
+        "toolbar_btn_move_up":     "↑",
+        "toolbar_btn_move_down":   "↓",
+        "toolbar_btn_delete":      "✕",
         # Layer panel
         "panel_layers_title":      "Layers",
         # Properties panel
@@ -83,18 +95,28 @@ _STRINGS: dict[str, dict[str, str]] = {
         "props_palette_label":     "Color palette (hex, comma-separated):",
         "layer_empty_label":       "—",
         # Fields (middle panel)
-        "field_high_level":        "High-level description:",
-        "field_style":             "Style description (JSON):",
-        "field_background":        "Background:",
+        "field_high_level":           "High-level description:",
+        "field_style":                "Style description",
+        "field_style_aesthetics":     "Aesthetics:",
+        "field_style_lighting":       "Lighting:",
+        "field_style_art_style":      "Art style:",
+        "field_style_medium":         "Medium:",
+        "field_style_palette":        "Color palette (hex, comma-separated):",
+        "field_background":           "Background:",
         # File dialogs
         "dialog_open_title":       "Open prompt",
         "dialog_save_title":       "Save prompt",
+        "dialog_overwrite_title":  "File exists",
+        "dialog_overwrite_msg":    "Overwrite file?\n{name}",
+        "dialog_overwrite_yes":    "Yes",
+        "dialog_overwrite_no":     "Cancel",
         "file_filter_all":         "All files",
         "file_filter_json":        "JSON prompt",
         "file_filter_txt":         "TXT + JSON",
         # Status messages
         "status_initial":          "Ctrl+Z = undo  |  Esc = cancel draw mode",
         "status_ready":            "Ready.",
+        "status_new":              "New document.",
         "status_draw_text":        "Draw bbox for [text]  (Esc = cancel)",
         "status_draw_obj":         "Draw bbox for [obj]  (Esc = cancel)",
         "status_undo_empty":       "Nothing to undo.",
@@ -115,7 +137,7 @@ _STRINGS: dict[str, dict[str, str]] = {
 
 AVAILABLE_LANGS = list(_STRINGS.keys())
 
-_lang = "ru"
+_lang = "en"
 
 
 def set_lang(lang: str) -> None:
