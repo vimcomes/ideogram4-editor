@@ -119,6 +119,8 @@ def _show_overwrite_confirm(path: str) -> None:
     global _pending_save_path
     _pending_save_path = path
     dpg.set_value("overwrite_dlg_text", i18n.t("dialog_overwrite_msg", name=os.path.basename(path)))
+    vw, vh = dpg.get_viewport_width(), dpg.get_viewport_height()
+    dpg.set_item_pos("overwrite_dlg", [vw // 2 - 170, vh // 2 - 57])
     dpg.show_item("overwrite_dlg")
 
 
