@@ -38,6 +38,8 @@ dpg.maximize_viewport()
 handlers.on_preset(None, state.PRESET_NAMES[3])
 
 # ── Render loop ───────────────────────────────────────────────────────────────
+# DPG 2.x: child_windows lack rect_min in get_item_state; use content_region_avail
+# instead. Drawlists do have rect_min — use it for the canvas origin.
 _prev_dl = (0, 0)
 _prev_vp = (0, 0)
 
@@ -48,23 +50,19 @@ while dpg.is_dearpygui_running():
     # Sync main window and table height to viewport
     if (vw, vh) != _prev_vp:
         dpg.configure_item("main", width=vw, height=vh)
-        panel_h = vh - 68   # toolbar + separator + statusbar
-        dpg.configure_item("main_table", height=panel_h)
+        dpg.configure_item("main_table", height=vh - 68)
         _prev_vp = (vw, vh)
 
-    # Sync canvas_dl size and cache its absolute position
+    # Sync canvas_dl size using panel_mid content_region_avail
     if dpg.does_item_exist("panel_mid"):
-        # Canvas width from actual panel_mid rect; height from viewport arithmetic.
-        # fields_panel is fixed at 215px; toolbar+sep+statusbar ≈ 68px; sep+pad ≈ 4px.
-        mid_w = max(200, vw // 2 - 20)  # fallback until rect is ready
         try:
-            pmin = dpg.get_item_rect_min("panel_mid")
-            pmax = dpg.get_item_rect_max("panel_mid")
-            mid_w = max(200, int(pmax[0] - pmin[0]) - 8)
-        except Exception as _e:
-            print("RENDER LOOP width ERR:", repr(_e))
-
-        mid_h = max(200, vh - 68 - 215 - 14)  # table_h - fields - separators
+            avail = dpg.get_item_state("panel_mid")["content_region_avail"]
+            # fields_panel=215, separator≈4, item-spacing≈10
+            mid_w = max(200, int(avail[0]) - 4)
+            mid_h = max(200, int(avail[1]) - 215 - 14)
+        except Exception:
+            mid_w = max(200, vw // 2 - 20)
+            mid_h = max(200, vh - 68 - 215 - 14)
 
         if (mid_w, mid_h) != _prev_dl:
             state.g_dl_w = mid_w
@@ -74,13 +72,14 @@ while dpg.is_dearpygui_running():
             import draw
             draw.redraw()
 
-        # Refresh cached canvas origin each frame (changes on viewport resize)
+        # Canvas absolute position — canvas_dl has rect_min in DPG 2.3.1
         try:
-            dl_pos = dpg.get_item_rect_min("canvas_dl")
-            state.g_dl_ox, state.g_dl_oy = dl_pos[0], dl_pos[1]
+            rm = dpg.get_item_state("canvas_dl")["rect_min"]
+            state.g_dl_ox = int(rm[0])
+            state.g_dl_oy = int(rm[1])
             state.g_canvas_ready = True
-        except Exception as _e:
-            print("RENDER LOOP origin ERR:", repr(_e))
+        except Exception:
+            pass
 
     dpg.render_dearpygui_frame()
 
