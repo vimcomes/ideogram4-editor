@@ -202,6 +202,21 @@ def move_down(s, u):
     panels.refresh_all()
 
 
+def new_document(s, u):
+    history.push_history()
+    state.st["elements"].clear()
+    state.st["selected"] = -1
+    state.st["add_mode"] = None
+    state.st["drag"] = None
+    state.st["draw_start"] = None
+    for tag in ["inp_high", "inp_style_aesthetics", "inp_style_lighting",
+                "inp_style_art_style", "inp_style_medium", "inp_style_palette", "inp_bg"]:
+        if dpg.does_item_exist(tag):
+            dpg.set_value(tag, "")
+    panels.refresh_all()
+    state.set_status(i18n.t("status_new"))
+
+
 def on_preset(s, name):
     for p in state.PRESETS:
         if p["name"] == name:

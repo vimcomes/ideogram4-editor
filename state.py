@@ -24,6 +24,8 @@ g_dl_h: int = 540
 g_dl_ox: int = 0     # absolute viewport X of canvas_dl top-left
 g_dl_oy: int = 0     # absolute viewport Y of canvas_dl top-left
 g_canvas_ready: bool = False  # True after first successful render-loop layout
+g_style_open: bool = True    # tracks collapsing_header state for canvas resize
+g_fields_h: int = 215        # fields_panel height, updated when style header toggled
 
 # ── Resolution presets ────────────────────────────────────────────────────────
 with open(config.PRESETS_FILE) as _f:

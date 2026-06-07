@@ -38,8 +38,9 @@ dpg.maximize_viewport()
 handlers.on_preset(None, state.PRESET_NAMES[3])
 
 # ── Render loop ───────────────────────────────────────────────────────────────
-_prev_dl = (0, 0)
-_prev_vp = (0, 0)
+_prev_dl       = (0, 0)
+_prev_vp       = (0, 0)
+_prev_fields_h = 215
 
 while dpg.is_dearpygui_running():
     vw = dpg.get_viewport_width()
@@ -47,17 +48,22 @@ while dpg.is_dearpygui_running():
 
     if (vw, vh) != _prev_vp:
         dpg.configure_item("main", width=vw, height=vh)
-        dpg.configure_item("main_table", height=vh - 68)
         _prev_vp = (vw, vh)
 
     if dpg.does_item_exist("panel_mid"):
+        fields_h = state.g_fields_h
+
+        if fields_h != _prev_fields_h:
+            dpg.configure_item("fields_panel", height=fields_h)
+            _prev_fields_h = fields_h
+
         try:
             avail = dpg.get_item_state("panel_mid")["content_region_avail"]
             mid_w = max(200, int(avail[0]) - 4)
-            mid_h = max(200, int(avail[1]) - 215 - 14)
+            mid_h = max(200, int(avail[1]) - fields_h - 14)
         except Exception:
             mid_w = max(200, vw // 2 - 20)
-            mid_h = max(200, vh - 68 - 215 - 14)
+            mid_h = max(200, vh - state.g_fields_h - 80)
 
         if (mid_w, mid_h) != _prev_dl:
             state.g_dl_w = mid_w
