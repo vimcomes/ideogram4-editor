@@ -5,6 +5,7 @@ import dearpygui.dearpygui as dpg
 import config   # noqa: F401  (side-effect: makedirs PROMPTS_DIR)
 import state
 import handlers
+import toolbar
 import ui
 
 # ── DPG init ──────────────────────────────────────────────────────────────────
@@ -35,7 +36,7 @@ dpg.show_viewport()
 dpg.set_primary_window("main", True)
 dpg.maximize_viewport()
 
-handlers.on_preset(None, state.PRESET_NAMES[3])
+toolbar.on_preset(None, state.PRESET_NAMES[3])
 
 # ── Render loop ───────────────────────────────────────────────────────────────
 _prev_dl       = (0, 0)

@@ -3,6 +3,7 @@ import dearpygui.dearpygui as dpg
 import state
 import config
 import handlers
+import toolbar
 import prompt_io
 import i18n
 
@@ -130,11 +131,11 @@ def build_ui() -> None:
                     state.PRESET_NAMES,
                     default_value=state.PRESET_NAMES[3],
                     width=185,
-                    callback=handlers.on_preset,
+                    callback=toolbar.on_preset,
                 )
                 dpg.add_separator()
 
-                btn_new = dpg.add_button(tag="btn_new",  label=i18n.t("toolbar_btn_new"),  callback=handlers.new_document)
+                btn_new = dpg.add_button(tag="btn_new",  label=i18n.t("toolbar_btn_new"),  callback=toolbar.new_document)
                 _tooltip(btn_new,  "New document (clear all)")
                 btn_undo = dpg.add_button(tag="btn_undo", label=i18n.t("toolbar_btn_undo"), callback=lambda s, u: __import__("history").undo())
                 _tooltip(btn_undo, "Undo (Ctrl+Z)")
@@ -151,7 +152,7 @@ def build_ui() -> None:
                     i18n.AVAILABLE_LANGS,
                     default_value=i18n.get_lang(),
                     width=55,
-                    callback=handlers.on_lang_change,
+                    callback=toolbar.on_lang_change,
                 )
 
         dpg.add_separator()
@@ -184,9 +185,9 @@ def build_ui() -> None:
                             dpg.add_text(i18n.t("panel_layers_title"), tag="ui_text_layers_title", color=(200, 200, 100, 255))
                             dpg.add_separator()
                             with dpg.group(horizontal=True):
-                                btn_at = dpg.add_button(tag="btn_add_text", label=i18n.t("toolbar_btn_add_text"), width=32, callback=handlers.add_text)
+                                btn_at = dpg.add_button(tag="btn_add_text", label=i18n.t("toolbar_btn_add_text"), width=32, callback=toolbar.add_text)
                                 _tooltip(btn_at, "Add text layer")
-                                btn_ao = dpg.add_button(tag="btn_add_obj",  label=i18n.t("toolbar_btn_add_obj"),  width=32, callback=handlers.add_obj)
+                                btn_ao = dpg.add_button(tag="btn_add_obj",  label=i18n.t("toolbar_btn_add_obj"),  width=32, callback=toolbar.add_obj)
                                 _tooltip(btn_ao, "Add object layer")
                             dpg.add_separator()
 
