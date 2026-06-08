@@ -1,4 +1,4 @@
-"""handlers.py — mouse, keyboard, and toolbar event handlers."""
+"""handlers.py — mouse and keyboard event handlers."""
 import dearpygui.dearpygui as dpg
 import state
 import config
@@ -6,7 +6,6 @@ import geometry
 import draw
 import panels
 import history
-import prompt_io
 import i18n
 
 
@@ -157,77 +156,3 @@ def on_key_press(sender, key):
             history.undo()
 
 
-# ── Toolbar callbacks ─────────────────────────────────────────────────────────
-def add_text(s, u):
-    state.st["add_mode"] = "text"
-    state.set_status(i18n.t("status_draw_text"))
-
-
-def add_obj(s, u):
-    state.st["add_mode"] = "obj"
-    state.set_status(i18n.t("status_draw_obj"))
-
-
-def del_selected(s, u):
-    i = state.st["selected"]
-    if i < 0 or i >= len(state.st["elements"]):
-        return
-    history.push_history()
-    state.st["elements"].pop(i)
-    state.st["selected"] = min(i, len(state.st["elements"]) - 1)
-    panels.refresh_all()
-
-
-def move_up(s, u):
-    i = state.st["selected"]
-    if i <= 0 or i >= len(state.st["elements"]):
-        return
-    history.push_history()
-    state.st["elements"][i], state.st["elements"][i - 1] = (
-        state.st["elements"][i - 1], state.st["elements"][i]
-    )
-    state.st["selected"] = i - 1
-    panels.refresh_all()
-
-
-def move_down(s, u):
-    i = state.st["selected"]
-    if i < 0 or i >= len(state.st["elements"]) - 1:
-        return
-    history.push_history()
-    state.st["elements"][i], state.st["elements"][i + 1] = (
-        state.st["elements"][i + 1], state.st["elements"][i]
-    )
-    state.st["selected"] = i + 1
-    panels.refresh_all()
-
-
-def new_document(s, u):
-    history.push_history()
-    state.st["elements"].clear()
-    state.st["selected"] = -1
-    state.st["add_mode"] = None
-    state.st["drag"] = None
-    state.st["draw_start"] = None
-    for tag in ["inp_high", "inp_style_aesthetics", "inp_style_lighting",
-                "inp_style_art_style", "inp_style_medium", "inp_style_palette", "inp_bg"]:
-        if dpg.does_item_exist(tag):
-            dpg.set_value(tag, "")
-    panels.refresh_all()
-    state.set_status(i18n.t("status_new"))
-
-
-def on_preset(s, name):
-    for p in state.PRESETS:
-        if p["name"] == name:
-            state.st["img_w"], state.st["img_h"] = p["w"], p["h"]
-            break
-    draw.redraw()
-
-
-def on_lang_change(s, lang_name: str) -> None:
-    i18n.set_lang(lang_name)
-    import ui
-    ui.refresh_ui_strings()
-    panels.refresh_all()
-    state.set_status(i18n.t("status_initial"))

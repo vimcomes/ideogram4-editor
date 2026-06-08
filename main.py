@@ -5,10 +5,13 @@ import dearpygui.dearpygui as dpg
 import config   # noqa: F401  (side-effect: makedirs PROMPTS_DIR)
 import state
 import handlers
+import toolbar
+import theme
 import ui
 
 # ── DPG init ──────────────────────────────────────────────────────────────────
 dpg.create_context()
+theme.apply_theme()
 
 with dpg.font_registry():
     with dpg.font(config.FONT_PATH, 15) as default_font:
@@ -23,6 +26,15 @@ with dpg.handler_registry():
 
 ui.build_ui()
 
+# ── Splitter themes (created after build_ui so context is ready) ──────────────
+with dpg.theme() as _sp_normal:
+    with dpg.theme_component(dpg.mvAll):
+        dpg.add_theme_color(dpg.mvThemeCol_ChildBg, (69, 71, 90, 80))
+with dpg.theme() as _sp_hot:
+    with dpg.theme_component(dpg.mvAll):
+        dpg.add_theme_color(dpg.mvThemeCol_ChildBg, (137, 180, 250, 180))
+dpg.bind_item_theme("splitter_h", _sp_normal)
+
 # ── Viewport setup ────────────────────────────────────────────────────────────
 dpg.create_viewport(
     title="Ideogram4 Layout Editor",
@@ -35,7 +47,7 @@ dpg.show_viewport()
 dpg.set_primary_window("main", True)
 dpg.maximize_viewport()
 
-handlers.on_preset(None, state.PRESET_NAMES[3])
+toolbar.on_preset(None, state.PRESET_NAMES[3])
 
 # ── Render loop ───────────────────────────────────────────────────────────────
 _prev_dl       = (0, 0)
@@ -51,27 +63,54 @@ while dpg.is_dearpygui_running():
         _prev_vp = (vw, vh)
 
     if dpg.does_item_exist("panel_mid"):
-        # Detect collapsing_header open/closed by checking child widget visibility
-        if dpg.does_item_exist("inp_style_aesthetics"):
-            try:
-                visible = dpg.get_item_state("inp_style_aesthetics").get("visible", True)
-                state.g_fields_h = 215 if visible else 130
-            except Exception:
-                pass
+
+        # ── Horizontal splitter drag ──────────────────────────────────────────
+        try:
+            sp_hov = dpg.get_item_state("splitter_h").get("hovered", False)
+            if sp_hov or state.g_split_dragging:
+                dpg.bind_item_theme("splitter_h", _sp_hot)
+            else:
+                dpg.bind_item_theme("splitter_h", _sp_normal)
+
+            if sp_hov and dpg.is_mouse_button_down(0) and not state.g_split_dragging:
+                state.g_split_dragging = True
+                state.g_split_prev_y = dpg.get_mouse_pos(local=False)[1]
+
+            if state.g_split_dragging:
+                if dpg.is_mouse_button_down(0):
+                    my = dpg.get_mouse_pos(local=False)[1]
+                    dy = my - state.g_split_prev_y
+                    state.g_split_prev_y = my
+                    # drag down → splitter moves down → canvas taller → fields shorter
+                    state.g_fields_h = max(60, state.g_fields_h - int(dy))
+                else:
+                    state.g_split_dragging = False
+        except Exception:
+            pass
+
+        try:
+            avail    = dpg.get_item_state("panel_mid")["content_region_avail"]
+            avail_h  = int(avail[1])
+            mid_w    = max(200, int(avail[0]) - 4)
+        except Exception:
+            avail_h  = vh - 80
+            mid_w    = max(200, vw // 2 - 20)
+
+        # first frame: init split position to 1/3 of available height
+        if not state.g_fields_h_init and avail_h > 200:
+            state.g_fields_h      = avail_h // 3
+            state.g_fields_h_init = True
+
+        # clamp so canvas always has at least 100px
+        state.g_fields_h = max(60, min(state.g_fields_h, avail_h - 100))
 
         fields_h = state.g_fields_h
+        # 6px splitter + item spacings
+        mid_h = max(100, avail_h - fields_h - 18)
 
         if fields_h != _prev_fields_h:
             dpg.configure_item("fields_panel", height=fields_h)
             _prev_fields_h = fields_h
-
-        try:
-            avail = dpg.get_item_state("panel_mid")["content_region_avail"]
-            mid_w = max(200, int(avail[0]) - 4)
-            mid_h = max(200, int(avail[1]) - fields_h - 14)
-        except Exception:
-            mid_w = max(200, vw // 2 - 20)
-            mid_h = max(200, vh - state.g_fields_h - 80)
 
         if (mid_w, mid_h) != _prev_dl:
             state.g_dl_w = mid_w
