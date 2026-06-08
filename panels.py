@@ -166,18 +166,21 @@ def refresh_props() -> None:
             draw.redraw()
         return cb
 
-    with dpg.group(horizontal=True, parent="props_group"):
-        for idx, lbl in enumerate(["ymin", "xmin", "ymax", "xmax"]):
-            with dpg.group():
-                dpg.add_text(lbl)
-                dpg.add_input_int(
-                    default_value=bbox[idx],
-                    width=82,
-                    min_value=0,
-                    max_value=1000,
-                    callback=make_bbox_cb(idx),
-                    tag=f"prop_bbox_{idx}",
-                )
+    _bbox_labels = ["ymin", "xmin", "ymax", "xmax"]
+    for row in range(2):
+        with dpg.group(horizontal=True, parent="props_group"):
+            for col in range(2):
+                idx = row * 2 + col
+                with dpg.group():
+                    dpg.add_text(_bbox_labels[idx])
+                    dpg.add_input_int(
+                        default_value=bbox[idx],
+                        width=180,
+                        min_value=0,
+                        max_value=1000,
+                        callback=make_bbox_cb(idx),
+                        tag=f"prop_bbox_{idx}",
+                    )
 
     dpg.add_separator(parent="props_group")
     dpg.add_text(i18n.t("props_palette_label"), parent="props_group")
