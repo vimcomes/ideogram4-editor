@@ -8,6 +8,7 @@ venv/
 
 # Prompts (user data, not source)
 prompts/
+/*.json
 
 # Editor/OS
 .idea/
