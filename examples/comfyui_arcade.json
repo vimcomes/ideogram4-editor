@@ -1,0 +1,63 @@
+{
+  "high_level_description": "Retro 80s arcade game box art parody for ComfyUI. Bold logo at top, cartoon programmer drowning in glowing spaghetti node graph in the center, INSERT GPU TO CONTINUE subtitle, humorous bottom credits strip. Vibrant neon colors on dark grid background.",
+  "style_description": {
+    "aesthetics": "retro 80s arcade box art, vibrant neon, bold outlines, campy humor, playful chaos",
+    "lighting": "flat even comic-book lighting, bright punchy neon glow effects, no natural shadows",
+    "medium": "illustration",
+    "art_style": "flat vector illustration, thick black outlines, retro arcade game graphic design, bold typography, pixel art influence",
+    "color_palette": ["#FF2D55", "#FFD60A", "#30D158", "#0A84FF", "#1C1C1E"]
+  },
+  "compositional_deconstruction": {
+    "background": "Dark near-black background with a classic 80s neon blue perspective grid floor. Diagonal speed lines radiating from center. Small pixel stars scattered across the upper area.",
+    "elements": [
+      {
+        "type": "text",
+        "bbox": [0, 20, 115, 980],
+        "text": "COMFYUI",
+        "desc": "Game title logo — massive ultra-bold condensed arcade font, hot pink with yellow drop shadow and thick black outline, full width",
+        "color_palette": ["#FF2D55", "#FFD60A"]
+      },
+      {
+        "type": "obj",
+        "bbox": [105, 30, 840, 970],
+        "desc": "A cartoon programmer character with wild hair and huge grin sitting at a glowing monitor. The screen shows an insane tangle of colorful node-graph wires. Hundreds of glowing nodes float and orbit around the character like planets. The programmer holds a coffee mug labeled MORE VRAM. Expression is gleeful panic. Thick comic-book outlines, vivid neon colors.",
+        "color_palette": ["#FFD60A", "#0A84FF", "#30D158", "#FF2D55", "#FFFFFF"]
+      },
+      {
+        "type": "text",
+        "bbox": [845, 20, 905, 480],
+        "text": "NODE",
+        "desc": "Subtitle word 1 — large bold arcade font, bright green, left half",
+        "color_palette": ["#30D158"]
+      },
+      {
+        "type": "text",
+        "bbox": [845, 500, 905, 980],
+        "text": "MADNESS",
+        "desc": "Subtitle word 2 — large bold arcade font, bright yellow, right half",
+        "color_palette": ["#FFD60A"]
+      },
+      {
+        "type": "text",
+        "bbox": [910, 20, 955, 480],
+        "text": "INSERT GPU",
+        "desc": "Call-to-action line 1 — blinking arcade prompt style, white bold font, left half",
+        "color_palette": ["#FFFFFF"]
+      },
+      {
+        "type": "text",
+        "bbox": [910, 500, 955, 980],
+        "text": "TO CONTINUE",
+        "desc": "Call-to-action line 2 — blinking arcade prompt style, white bold font, right half",
+        "color_palette": ["#FFFFFF"]
+      },
+      {
+        "type": "text",
+        "bbox": [960, 0, 1000, 1000],
+        "text": "RATED E FOR EVERYONE  •  EXCEPT YOUR GPU  •  ©2025",
+        "desc": "Bottom credits strip — tiny white text on dark red band, full width, humorous rating disclaimer",
+        "color_palette": ["#FFFFFF"]
+      }
+    ]
+  }
+}

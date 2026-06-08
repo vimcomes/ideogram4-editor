@@ -9,6 +9,11 @@ import history
 import i18n
 
 
+# ── Keyboard repeat guard ─────────────────────────────────────────────────────
+# add_key_press_handler fires every frame while held — track first-press only
+_z_was_held: bool = False
+
+
 # ── Focus helpers ─────────────────────────────────────────────────────────────
 def _input_has_focus() -> bool:
     focused = dpg.get_focused_item()
@@ -144,6 +149,7 @@ def on_mouse_release(sender, app_data):
 
 # ── Keyboard handler ─────────────────────────────────────────────────────────
 def on_key_press(sender, key):
+    global _z_was_held
     if key == dpg.mvKey_Escape:
         if not _input_has_focus():
             state.st["add_mode"] = None
@@ -152,7 +158,14 @@ def on_key_press(sender, key):
             draw.redraw()
     elif key == dpg.mvKey_Z:
         ctrl = dpg.is_key_down(dpg.mvKey_LControl) or dpg.is_key_down(dpg.mvKey_RControl)
-        if ctrl and not _input_has_focus():
+        if ctrl and not _input_has_focus() and not _z_was_held:
             history.undo()
+        _z_was_held = True
+
+
+def on_key_release(sender, key):
+    global _z_was_held
+    if key == dpg.mvKey_Z:
+        _z_was_held = False
 
 

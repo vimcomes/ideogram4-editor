@@ -10,6 +10,11 @@ venv/
 prompts/
 /*.json
 
+# Root-level screenshots / exports (user files)
+/*.png
+/*.jpg
+/*.webp
+
 # Editor/OS
 .idea/
 .vscode/
