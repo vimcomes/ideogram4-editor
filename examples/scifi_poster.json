@@ -1,0 +1,70 @@
+{
+  "high_level_description": "Cinematic sci-fi thriller movie poster. A lone astronaut stands on a desolate alien rocky plain under a massive ringed gas planet. Bold white title at top, moody tagline above the horizon, studio credits strip at the bottom. Dark, epic, photorealistic.",
+  "style_description": {
+    "aesthetics": "cinematic, epic, moody, desaturated teal and orange",
+    "lighting": "cold ambient starlight, single harsh backlight rim on the astronaut, volumetric atmospheric haze near the horizon",
+    "photo": "24mm wide angle, f/8, long exposure, high dynamic range, extreme depth of field",
+    "medium": "photograph",
+    "color_palette": ["#0A0E1A", "#1B3A4B", "#E87040", "#C8D8E0", "#FFFFFF"]
+  },
+  "compositional_deconstruction": {
+    "background": "Desolate alien rocky plain stretching to a flat horizon. Massive ringed gas giant dominates the upper sky, glowing amber and teal. Dense star field fills the rest of the sky. Thin atmospheric mist near the ground.",
+    "elements": [
+      {
+        "type": "obj",
+        "bbox": [200, 350, 880, 680],
+        "desc": "A lone astronaut in a white weathered spacesuit, standing upright, facing away from the camera toward the gas giant on the horizon. Helmet visor reflects the planet's amber glow. Long shadow cast across the rocky ground. Photorealistic, highly detailed suit surface.",
+        "color_palette": ["#C8D8E0", "#E87040", "#0A0E1A"]
+      },
+      {
+        "type": "text",
+        "bbox": [30, 60, 110, 940],
+        "text": "THE LAST",
+        "desc": "Movie title line 1 — ultra-bold wide condensed white sans-serif, full width, slight letter-spacing",
+        "color_palette": ["#FFFFFF"]
+      },
+      {
+        "type": "text",
+        "bbox": [110, 60, 200, 940],
+        "text": "SIGNAL",
+        "desc": "Movie title line 2 — same font, larger, all caps, dominant presence",
+        "color_palette": ["#FFFFFF"]
+      },
+      {
+        "type": "text",
+        "bbox": [700, 80, 755, 920],
+        "text": "SIXTY MILLION",
+        "desc": "Tagline line 1 — small elegant italic white serif, centered",
+        "color_palette": ["#C8D8E0"]
+      },
+      {
+        "type": "text",
+        "bbox": [755, 80, 810, 920],
+        "text": "MILES FROM HOME.",
+        "desc": "Tagline line 2 — small elegant italic white serif, centered",
+        "color_palette": ["#C8D8E0"]
+      },
+      {
+        "type": "text",
+        "bbox": [810, 80, 865, 920],
+        "text": "NO WAY BACK.",
+        "desc": "Tagline line 3 — small elegant italic white serif, centered, final beat",
+        "color_palette": ["#C8D8E0"]
+      },
+      {
+        "type": "text",
+        "bbox": [900, 80, 945, 920],
+        "text": "STARRING JAMES COLE  MAYA REED  DR. YUNA PARK",
+        "desc": "Cast credits — tiny all-caps white tracking font, centered",
+        "color_palette": ["#FFFFFF"]
+      },
+      {
+        "type": "text",
+        "bbox": [955, 0, 1000, 1000],
+        "text": "NOVA PICTURES  •  IN THEATRES SUMMER 2025  •  THISLASTSIGNAL.COM",
+        "desc": "Bottom studio bar — tiny white text on near-black strip, full width",
+        "color_palette": ["#FFFFFF"]
+      }
+    ]
+  }
+}
