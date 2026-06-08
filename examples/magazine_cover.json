@@ -47,14 +47,14 @@
       {
         "type": "text",
         "bbox": [268, 20, 318, 420],
-        "text": "HOW TO SURVIVE",
+        "text": "HOW TO COPE",
         "desc": "Left teaser line 4 — smaller bold yellow sans-serif",
         "color_palette": ["#FFD700"]
       },
       {
         "type": "text",
         "bbox": [318, 20, 368, 420],
-        "text": "WITHOUT LOSING IT",
+        "text": "STAY SANE",
         "desc": "Left teaser line 5 — smaller bold yellow sans-serif",
         "color_palette": ["#FFD700"]
       },
@@ -68,7 +68,7 @@
       {
         "type": "text",
         "bbox": [480, 20, 530, 420],
-        "text": "THAT STILL WORK",
+        "text": "THAT WORK",
         "desc": "Left second block line 2 — bold yellow sans-serif",
         "color_palette": ["#FFD700"]
       },
@@ -110,21 +110,21 @@
       {
         "type": "text",
         "bbox": [420, 600, 480, 980],
-        "text": "VPN FOR DUMMIES",
+        "text": "VPN 101",
         "desc": "Right second block line 1 — bold white condensed sans-serif",
         "color_palette": ["#FFFFFF"]
       },
       {
         "type": "text",
         "bbox": [480, 600, 530, 980],
-        "text": "5 STEPS WHILE",
+        "text": "5 STEPS TO",
         "desc": "Right second block line 2 — bold yellow sans-serif",
         "color_palette": ["#FFD700"]
       },
       {
         "type": "text",
         "bbox": [530, 600, 580, 980],
-        "text": "THEY'RE NOT WATCHING",
+        "text": "GO DARK",
         "desc": "Right second block line 3 — bold yellow sans-serif",
         "color_palette": ["#FFD700"]
       },
