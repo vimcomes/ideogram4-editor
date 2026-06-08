@@ -201,7 +201,13 @@ def build_ui() -> None:
                             border=False, no_scrollbar=True,
                         ):
                             dpg.add_drawlist(tag="canvas_dl", width=400, height=10)
-                            dpg.add_separator()
+                            with dpg.child_window(
+                                tag="splitter_h",
+                                width=-1, height=6,
+                                border=False,
+                                no_scrollbar=True, no_scroll_with_mouse=True,
+                            ):
+                                pass
                             with dpg.child_window(
                                 tag="fields_panel",
                                 width=-1, height=215,
