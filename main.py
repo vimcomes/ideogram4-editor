@@ -23,6 +23,7 @@ with dpg.handler_registry():
     dpg.add_mouse_move_handler(              callback=handlers.on_mouse_move)
     dpg.add_mouse_release_handler(button=0,  callback=handlers.on_mouse_release)
     dpg.add_key_press_handler(               callback=handlers.on_key_press)
+    dpg.add_key_release_handler(             callback=handlers.on_key_release)
 
 ui.build_ui()
 
