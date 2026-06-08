@@ -2,7 +2,6 @@
 import dearpygui.dearpygui as dpg
 import state
 import config
-import handlers
 import toolbar
 import prompt_io
 import i18n
