@@ -90,7 +90,7 @@ def on_open_selected(sender, app_data):
         state.set_status(i18n.t("status_no_file"))
         return
     try:
-        history.push_history()
+        history.clear()
         _load_data(_parse_file(path))
         state.set_status(i18n.t("status_opened", name=os.path.basename(path), count=len(state.st["elements"])))
     except Exception as e:
