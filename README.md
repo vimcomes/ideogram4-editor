@@ -10,13 +10,22 @@
 
 ## What it is
 
-Ideogram 4 supports structured JSON prompts where each region of the image is described separately with a bounding box. Writing these prompts by hand is tedious. This editor lets you draw bbox regions on a canvas (like Photoshop's layer panel), set text/style properties per layer, and export a ready-to-paste JSON prompt in one click.
+Ideogram 4 accepts structured JSON prompts where every region of the image is described separately with a bounding box. Writing these by hand is error-prone. This editor lets you draw bbox regions on a proportional canvas (like Photoshop's layer panel), set text/style properties per layer, and export a ready-to-paste JSON prompt in one click.
+
+## Example outputs
+
+| Sci-fi movie poster (`photo` mode) | ComfyUI arcade parody (`art` mode) |
+|---|---|
+| ![scifi](examples/scifi_poster.png) | ![comfyui](examples/comfyui_arcade.png) |
+
+Prompt files for both are in `examples/` — open them with File → Open to explore the layout.
 
 ## Features
 
 - Draw and resize `text` / `obj` bbox layers on a proportional canvas
-- Layer panel with drag-to-reorder, show/hide, delete
+- Layer panel with reorder (↑↓), delete, multi-layer support
 - Properties panel: description, color palette, optional text content
+- **Photo / Art style toggle** — correct key order per Ideogram 4 schema
 - Undo / redo (`Ctrl+Z` / `Ctrl+Y`)
 - Save / load JSON, copy prompt to clipboard
 - 8 resolution presets (9:16 portrait → 16:9 landscape)
@@ -41,20 +50,31 @@ pip install -r requirements.txt
 run.bat           # Windows        (same auto-venv logic)
 ```
 
-Or manually:
+## How to use
 
-```bash
-python main.py
-```
+1. **Choose resolution** — pick a preset from the top-left dropdown (e.g. `9:16 1168×1712`)
+2. **Add layers** — click `⊕T` to add a text layer or `⊕O` for an object layer, then draw a bbox on the canvas
+3. **Edit properties** — select a layer and fill in *Description*, *Text* (for text layers), and *Color palette* in the right panel
+4. **Fill style fields** — expand *Style description*, choose Art or Photo mode, fill in aesthetics / lighting / medium
+5. **Copy or save** — click `❐` to copy the JSON to clipboard, or `▽` to save to a file
+6. **Undo** — `Ctrl+Z` steps back one action at a time
+
+**Tips:**
+- Drag the horizontal bar between canvas and style fields to resize them
+- Long text strings in `text` layers should be split across multiple short bbox rows — the model handles short lines better
+- Load `examples/magazine_cover.json` or `examples/scifi_poster.json` to see a complete prompt
 
 ## Prompt format
-
-The editor exports JSON accepted directly by the Ideogram 4 API:
 
 ```json
 {
   "high_level_description": "A product poster for a smartwatch",
-  "style_description": "Clean minimal background, soft shadows",
+  "style_description": {
+    "aesthetics": "clean, minimal, soft shadows",
+    "lighting": "soft studio light, no hard shadows",
+    "medium": "photograph",
+    "photo": "85mm, f/2.8, shallow depth of field"
+  },
   "compositional_deconstruction": {
     "background": "Soft grey gradient",
     "elements": [
@@ -62,13 +82,13 @@ The editor exports JSON accepted directly by the Ideogram 4 API:
         "type": "obj",
         "bbox": [100, 200, 800, 800],
         "desc": "Smartwatch hero shot",
-        "color_palette": ["#1a1a2e", "#silver"]
+        "color_palette": ["#1a1a2e", "#c0c0c0"]
       },
       {
         "type": "text",
-        "bbox": [820, 100, 950, 900],
-        "desc": "Product name",
+        "bbox": [820, 100, 880, 900],
         "text": "NOVA X1",
+        "desc": "Product name — bold white sans-serif",
         "color_palette": ["#ffffff"]
       }
     ]
@@ -76,13 +96,14 @@ The editor exports JSON accepted directly by the Ideogram 4 API:
 }
 ```
 
-`bbox` values are `[ymin, xmin, ymax, xmax]` in a 0–1000 relative coordinate space (resolution-independent).
+`bbox` is `[ymin, xmin, ymax, xmax]` in 0–1000 relative coordinates (resolution-independent).  
+`style_description` key order matters — the editor handles it automatically based on Art/Photo mode.
 
 ## Development
 
 ```bash
 pip install -r requirements-dev.txt
-python -m pytest -q          # should show 50 passed
+python -m pytest -q          # 50 tests
 ```
 
 ## Architecture
