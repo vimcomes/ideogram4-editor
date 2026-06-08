@@ -24,18 +24,36 @@ def _load_data(data: dict) -> None:
     if isinstance(style, dict):
         dpg.set_value("inp_style_aesthetics", style.get("aesthetics", ""))
         dpg.set_value("inp_style_lighting",   style.get("lighting", ""))
-        dpg.set_value("inp_style_art_style",  style.get("art_style", ""))
         dpg.set_value("inp_style_medium",     style.get("medium", ""))
         palette = style.get("color_palette", [])
         dpg.set_value("inp_style_palette",
                       ", ".join(palette) if isinstance(palette, list) else str(palette))
+        # Detect photo vs art mode from loaded JSON
+        import toolbar as _tb
+        if "photo" in style:
+            dpg.set_value("inp_style_photo",     style.get("photo", ""))
+            dpg.set_value("inp_style_art_style", "")
+            if dpg.does_item_exist("style_mode_radio"):
+                dpg.set_value("style_mode_radio", "photo")
+            _tb.on_style_mode_change(None, "photo")
+        else:
+            dpg.set_value("inp_style_art_style", style.get("art_style", ""))
+            dpg.set_value("inp_style_photo",     "")
+            if dpg.does_item_exist("style_mode_radio"):
+                dpg.set_value("style_mode_radio", "art")
+            _tb.on_style_mode_change(None, "art")
     else:
         # Fallback: plain string → put in aesthetics
+        import toolbar as _tb
         dpg.set_value("inp_style_aesthetics", str(style) if style else "")
         dpg.set_value("inp_style_lighting",   "")
+        dpg.set_value("inp_style_photo",      "")
         dpg.set_value("inp_style_art_style",  "")
         dpg.set_value("inp_style_medium",     "")
         dpg.set_value("inp_style_palette",    "")
+        if dpg.does_item_exist("style_mode_radio"):
+            dpg.set_value("style_mode_radio", "art")
+        _tb.on_style_mode_change(None, "art")
 
     dpg.set_value(
         "inp_bg",
@@ -50,15 +68,27 @@ def _load_data(data: dict) -> None:
 
 def build_prompt() -> dict:
     style: dict = {}
+    # Always first: aesthetics, lighting
     for key, tag in [
         ("aesthetics", "inp_style_aesthetics"),
         ("lighting",   "inp_style_lighting"),
-        ("art_style",  "inp_style_art_style"),
-        ("medium",     "inp_style_medium"),
     ]:
         val = dpg.get_value(tag).strip()
         if val:
             style[key] = val
+    # Key order depends on mode (matches Ideogram 4 training schema)
+    if state.g_style_mode == "photo":
+        # photo → medium
+        for key, tag in [("photo", "inp_style_photo"), ("medium", "inp_style_medium")]:
+            val = dpg.get_value(tag).strip()
+            if val:
+                style[key] = val
+    else:
+        # medium → art_style
+        for key, tag in [("medium", "inp_style_medium"), ("art_style", "inp_style_art_style")]:
+            val = dpg.get_value(tag).strip()
+            if val:
+                style[key] = val
     palette_raw = dpg.get_value("inp_style_palette").strip()
     if palette_raw:
         style["color_palette"] = [c.strip() for c in palette_raw.split(",") if c.strip()]

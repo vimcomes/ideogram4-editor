@@ -24,6 +24,7 @@ g_dl_h: int = 540
 g_dl_ox: int = 0     # absolute viewport X of canvas_dl top-left
 g_dl_oy: int = 0     # absolute viewport Y of canvas_dl top-left
 g_canvas_ready: bool = False  # True after first successful render-loop layout
+g_style_mode: str = "art"    # "art" or "photo" — controls style_description key order
 g_fields_h: int = 215        # fields_panel height, controlled by horizontal splitter
 g_fields_h_init: bool = False  # True after first-frame init from real avail height
 g_split_dragging: bool = False

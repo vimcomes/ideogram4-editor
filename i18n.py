@@ -31,8 +31,10 @@ _STRINGS: dict[str, dict[str, str]] = {
         # Fields (middle panel)
         "field_high_level":           "High-level description:",
         "field_style":                "Style description",
+        "field_style_type":           "Тип стиля:",
         "field_style_aesthetics":     "Aesthetics:",
         "field_style_lighting":       "Lighting:",
+        "field_style_photo":          "Photo (камера/линза):",
         "field_style_art_style":      "Art style:",
         "field_style_medium":         "Medium:",
         "field_style_palette":        "Color palette (hex через запятую):",
@@ -97,8 +99,10 @@ _STRINGS: dict[str, dict[str, str]] = {
         # Fields (middle panel)
         "field_high_level":           "High-level description:",
         "field_style":                "Style description",
+        "field_style_type":           "Style type:",
         "field_style_aesthetics":     "Aesthetics:",
         "field_style_lighting":       "Lighting:",
+        "field_style_photo":          "Photo (camera/lens):",
         "field_style_art_style":      "Art style:",
         "field_style_medium":         "Medium:",
         "field_style_palette":        "Color palette (hex, comma-separated):",

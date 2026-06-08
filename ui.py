@@ -25,8 +25,10 @@ def refresh_ui_strings() -> None:
         "ui_text_layers_title":        "panel_layers_title",
         "ui_text_props_title":         "panel_props_title",
         "ui_text_high_label":          "field_high_level",
+        "ui_text_style_type":          "field_style_type",
         "ui_text_style_aesthetics":    "field_style_aesthetics",
         "ui_text_style_lighting":      "field_style_lighting",
+        "ui_text_style_photo":         "field_style_photo",
         "ui_text_style_art_style":     "field_style_art_style",
         "ui_text_style_medium":        "field_style_medium",
         "ui_text_style_palette":       "field_style_palette",
@@ -224,14 +226,26 @@ def build_ui() -> None:
                                     tag="ui_style_header",
                                     default_open=True,
                                 ):
+                                    dpg.add_text(i18n.t("field_style_type"), tag="ui_text_style_type")
+                                    dpg.add_radio_button(
+                                        ["art", "photo"],
+                                        tag="style_mode_radio",
+                                        default_value="art",
+                                        horizontal=True,
+                                        callback=toolbar.on_style_mode_change,
+                                    )
                                     dpg.add_text(i18n.t("field_style_aesthetics"), tag="ui_text_style_aesthetics")
                                     dpg.add_input_text(tag="inp_style_aesthetics", width=-1, default_value="")
                                     dpg.add_text(i18n.t("field_style_lighting"), tag="ui_text_style_lighting")
                                     dpg.add_input_text(tag="inp_style_lighting", width=-1, default_value="")
-                                    dpg.add_text(i18n.t("field_style_art_style"), tag="ui_text_style_art_style")
-                                    dpg.add_input_text(tag="inp_style_art_style", width=-1, default_value="")
+                                    # photo field — shown only in photo mode (before medium)
+                                    dpg.add_text(i18n.t("field_style_photo"), tag="ui_text_style_photo", show=False)
+                                    dpg.add_input_text(tag="inp_style_photo", width=-1, default_value="", show=False)
                                     dpg.add_text(i18n.t("field_style_medium"), tag="ui_text_style_medium")
                                     dpg.add_input_text(tag="inp_style_medium", width=-1, default_value="")
+                                    # art_style field — shown only in art mode (after medium)
+                                    dpg.add_text(i18n.t("field_style_art_style"), tag="ui_text_style_art_style")
+                                    dpg.add_input_text(tag="inp_style_art_style", width=-1, default_value="")
                                     dpg.add_text(i18n.t("field_style_palette"), tag="ui_text_style_palette")
                                     dpg.add_input_text(tag="inp_style_palette", width=-1, default_value="")
 
