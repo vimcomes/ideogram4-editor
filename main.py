@@ -135,6 +135,9 @@ while dpg.is_dearpygui_running():
         except Exception:
             pass
 
+    import underlay as _ul
+    _ul.flush_deletes()
+
     if state.g_underlay_dirty:
         state.g_underlay_dirty = False
         import panels
