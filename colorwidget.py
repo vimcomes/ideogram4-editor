@@ -48,8 +48,8 @@ def build_ui() -> None:
         show=False,
         modal=True,
         no_close=True,
-        width=320,
-        height=370,
+        width=420,
+        height=440,
         no_move=True,
         no_resize=True,
         no_collapse=True,
@@ -106,7 +106,7 @@ def build_palette_button(parent, target_input_tag: str, on_change=None) -> None:
 def _center_and_show() -> None:
     vw = dpg.get_viewport_width()
     vh = dpg.get_viewport_height()
-    dpg.set_item_pos("colorpicker_dlg", [vw // 2 - 160, vh // 2 - 185])
+    dpg.set_item_pos("colorpicker_dlg", [vw // 2 - 210, vh // 2 - 220])
     dpg.show_item("colorpicker_dlg")
 
 
