@@ -68,6 +68,22 @@ _STRINGS: dict[str, dict[str, str]] = {
         "error_json_not_in_txt":   "JSON не найден в .txt файле",
         # Canvas hints (drawn on drawlist)
         "canvas_draw_hint":        "Рисуй bbox [{mode}]  (Esc = отмена)",
+        # Color picker
+        "colorpicker_title":       "Выбор цвета",
+        "colorpicker_ok":          "OK",
+        "colorpicker_cancel":      "Отмена",
+        "colorpicker_tooltip":     "Открыть колор-пикер",
+        # Underlay
+        "underlay_section":        "Подложка",
+        "underlay_add":            "⊞ Добавить",
+        "underlay_remove":         "✕ Удалить",
+        "underlay_visible":        "Показать",
+        "underlay_opacity":        "Прозрачность",
+        "underlay_fit_stretch":    "Растянуть",
+        "underlay_fit_crop":       "Кадрировать",
+        "underlay_loaded":         "Подложка: {name}",
+        "underlay_error_load":     "Ошибка загрузки подложки: {err}",
+        "file_filter_image":       "PNG / JPEG",
     },
     "en": {
         # App
@@ -136,6 +152,22 @@ _STRINGS: dict[str, dict[str, str]] = {
         "error_json_not_in_txt":   "JSON not found in .txt file",
         # Canvas hints (drawn on drawlist)
         "canvas_draw_hint":        "Draw bbox [{mode}]  (Esc = cancel)",
+        # Color picker
+        "colorpicker_title":       "Color picker",
+        "colorpicker_ok":          "OK",
+        "colorpicker_cancel":      "Cancel",
+        "colorpicker_tooltip":     "Open color picker",
+        # Underlay
+        "underlay_section":        "Underlay",
+        "underlay_add":            "⊞ Add",
+        "underlay_remove":         "✕ Remove",
+        "underlay_visible":        "Show",
+        "underlay_opacity":        "Opacity",
+        "underlay_fit_stretch":    "Stretch",
+        "underlay_fit_crop":       "Crop",
+        "underlay_loaded":         "Underlay: {name}",
+        "underlay_error_load":     "Underlay load error: {err}",
+        "file_filter_image":       "PNG / JPEG",
     },
 }
 

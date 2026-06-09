@@ -1,10 +1,12 @@
-"""panels.py — layer panel, properties panel, selection, and themes."""
+"""panels.py — layer panel, properties panel, underlay panel, selection, and themes."""
 import dearpygui.dearpygui as dpg
 import state
 import geometry
 import draw
 import history
 import i18n
+import colorwidget
+import underlay
 
 # ── Button themes ─────────────────────────────────────────────────────────────
 _sel_btn_theme = None
@@ -189,12 +191,90 @@ def refresh_props() -> None:
     def cb_pal(s, v):
         el["color_palette"] = [c.strip() for c in v.split(",") if c.strip()]
 
-    dpg.add_input_text(
-        default_value=pal_str,
-        width=-1,
-        callback=cb_pal,
-        parent="props_group",
-    )
+    with dpg.group(horizontal=True, parent="props_group") as _pal_group:
+        pal_tag = f"prop_palette_{i}"
+        dpg.add_input_text(
+            tag=pal_tag,
+            default_value=pal_str,
+            width=-30,
+            callback=cb_pal,
+        )
+        def _make_pal_change(elem):
+            def _cb(new_val):
+                elem["color_palette"] = [c.strip() for c in new_val.split(",") if c.strip()]
+            return _cb
+        colorwidget.build_palette_button(
+            parent=_pal_group,
+            target_input_tag=pal_tag,
+            on_change=_make_pal_change(el),
+        )
+
+
+# ── Underlay panel ────────────────────────────────────────────────────────────
+def refresh_underlay_panel() -> None:
+    if not dpg.does_item_exist("underlay_panel"):
+        return
+    dpg.delete_item("underlay_panel", children_only=True)
+    ul = state.st["underlay"]
+
+    dpg.add_text(i18n.t("underlay_section"), parent="underlay_panel",
+                 color=(200, 200, 100, 255))
+    dpg.add_separator(parent="underlay_panel")
+
+    def _open_dlg(s, u):
+        if dpg.does_item_exist("underlay_dlg"):
+            dpg.show_item("underlay_dlg")
+
+    dpg.add_button(label=i18n.t("underlay_add"), width=-1,
+                   callback=_open_dlg, parent="underlay_panel")
+
+    if ul["path"] is not None:
+        def _remove(s, u):
+            underlay.clear()
+            state.g_underlay_dirty = True
+            draw.redraw()
+
+        dpg.add_button(label=i18n.t("underlay_remove"), width=-1,
+                       callback=_remove, parent="underlay_panel")
+
+        def _toggle_visible(s, v):
+            ul["visible"] = v
+            draw.redraw()
+
+        dpg.add_checkbox(
+            label=i18n.t("underlay_visible"),
+            default_value=ul["visible"],
+            callback=_toggle_visible,
+            parent="underlay_panel",
+        )
+
+        def _set_opacity(s, v):
+            ul["opacity"] = v
+            draw.redraw()
+
+        dpg.add_text(i18n.t("underlay_opacity"), parent="underlay_panel")
+        dpg.add_slider_float(
+            min_value=0.0, max_value=1.0,
+            default_value=ul["opacity"],
+            width=-1,
+            callback=_set_opacity,
+            parent="underlay_panel",
+        )
+
+        def _set_fit(s, v):
+            ul["fit"] = "crop" if v == i18n.t("underlay_fit_crop") else "stretch"
+            draw.redraw()
+
+        dpg.add_radio_button(
+            [i18n.t("underlay_fit_stretch"), i18n.t("underlay_fit_crop")],
+            default_value=i18n.t("underlay_fit_crop") if ul["fit"] == "crop"
+                          else i18n.t("underlay_fit_stretch"),
+            horizontal=True,
+            callback=_set_fit,
+            parent="underlay_panel",
+        )
+
+    dpg.add_separator(parent="underlay_panel")
 
 
 # ── Selection ─────────────────────────────────────────────────────────────────
@@ -209,4 +289,5 @@ def select(idx: int) -> None:
 def refresh_all() -> None:
     refresh_layers()
     refresh_props()
+    refresh_underlay_panel()
     draw.redraw()

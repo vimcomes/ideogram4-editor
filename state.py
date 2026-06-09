@@ -14,6 +14,15 @@ st: dict = {
     "draw_start": None,
     "pressed": False,
     "status": "",
+    "underlay": {
+        "path":        None,   # str | None — editor-only, never written to prompt JSON
+        "texture_tag": None,
+        "visible":     True,
+        "opacity":     0.5,
+        "fit":         "stretch",  # "stretch" | "crop"
+        "img_w":       0,
+        "img_h":       0,
+    },
 }
 
 # ── Canvas geometry globals (updated each render frame) ───────────────────────
@@ -29,6 +38,7 @@ g_fields_h: int = 215        # fields_panel height, controlled by horizontal spl
 g_fields_h_init: bool = False  # True after first-frame init from real avail height
 g_split_dragging: bool = False
 g_split_prev_y:   float = 0.0
+g_underlay_dirty: bool = False   # set by callbacks; render loop rebuilds underlay panel
 
 # ── Resolution presets ────────────────────────────────────────────────────────
 with open(config.PRESETS_FILE) as _f:

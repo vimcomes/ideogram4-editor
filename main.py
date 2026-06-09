@@ -8,10 +8,14 @@ import handlers
 import toolbar
 import theme
 import ui
+from version import __version__
 
 # ── DPG init ──────────────────────────────────────────────────────────────────
 dpg.create_context()
 theme.apply_theme()
+
+# Single persistent texture registry for all dynamic textures (underlay, etc.)
+dpg.add_texture_registry(tag="tex_reg")
 
 with dpg.font_registry():
     with dpg.font(config.FONT_PATH, 15) as default_font:
@@ -38,7 +42,7 @@ dpg.bind_item_theme("splitter_h", _sp_normal)
 
 # ── Viewport setup ────────────────────────────────────────────────────────────
 dpg.create_viewport(
-    title="Ideogram4 Layout Editor",
+    title=f"Ideogram4 Layout Editor  v{__version__}",
     width=config.INIT_W, height=config.INIT_H,
     resizable=True, min_width=900, min_height=600,
 )
@@ -49,6 +53,8 @@ dpg.set_primary_window("main", True)
 dpg.maximize_viewport()
 
 toolbar.on_preset(None, state.PRESET_NAMES[3])
+import panels as _panels
+_panels.refresh_underlay_panel()
 
 # ── Render loop ───────────────────────────────────────────────────────────────
 _prev_dl       = (0, 0)
@@ -128,6 +134,14 @@ while dpg.is_dearpygui_running():
             state.g_canvas_ready = True
         except Exception:
             pass
+
+    import underlay as _ul
+    _ul.flush_deletes()
+
+    if state.g_underlay_dirty:
+        state.g_underlay_dirty = False
+        import panels
+        panels.refresh_underlay_panel()
 
     dpg.render_dearpygui_frame()
 
