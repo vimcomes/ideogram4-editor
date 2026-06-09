@@ -222,7 +222,7 @@ def build_ui() -> None:
                                 _tooltip(btn_ao, "Add object layer")
                             dpg.add_separator()
 
-                            with dpg.child_window(tag="layer_list", width=-1, height=-1, border=False):
+                            with dpg.child_window(tag="layer_list", width=-1, height=-150, border=False):
                                 pass
 
                             with dpg.child_window(tag="underlay_panel", width=-1, height=140,
