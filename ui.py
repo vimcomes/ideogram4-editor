@@ -5,6 +5,9 @@ import config
 import toolbar
 import prompt_io
 import i18n
+import colorwidget
+import underlay as _underlay
+import panels
 
 
 def _open_file(s, u):
@@ -17,6 +20,17 @@ def _save_file(s, u):
         dpg.show_item("save_dlg")
 
 
+def _on_underlay_selected(sender, app_data):
+    selections = app_data.get("selections", {})
+    path = next(iter(selections.values())) if selections else app_data.get("file_path_name", "")
+    if not path:
+        return
+    _underlay.load(path)
+    panels.refresh_underlay_panel()
+    import draw
+    draw.redraw()
+
+
 
 def refresh_ui_strings() -> None:
     """Update all tagged static UI items to the current language."""
@@ -25,8 +39,10 @@ def refresh_ui_strings() -> None:
         "ui_text_layers_title":        "panel_layers_title",
         "ui_text_props_title":         "panel_props_title",
         "ui_text_high_label":          "field_high_level",
+        "ui_text_style_type":          "field_style_type",
         "ui_text_style_aesthetics":    "field_style_aesthetics",
         "ui_text_style_lighting":      "field_style_lighting",
+        "ui_text_style_photo":         "field_style_photo",
         "ui_text_style_art_style":     "field_style_art_style",
         "ui_text_style_medium":        "field_style_medium",
         "ui_text_style_palette":       "field_style_palette",
@@ -60,6 +76,9 @@ def _tooltip(parent, text: str) -> None:
 
 
 def build_ui() -> None:
+    # ── Color picker modal (pre-built, shared by all palette buttons) ─────────
+    colorwidget.build_ui()
+
     # ── Overwrite confirmation dialog (pre-built, show/hide) ──────────────────
     with dpg.window(
         tag="overwrite_dlg",
@@ -107,6 +126,19 @@ def build_ui() -> None:
     ):
         dpg.add_file_extension(".*",    color=(200, 200, 200, 255), custom_text=i18n.t("file_filter_all"))
         dpg.add_file_extension(".json", color=(100, 220, 100, 255), custom_text=i18n.t("file_filter_json"))
+
+    with dpg.file_dialog(
+        tag="underlay_dlg",
+        label=i18n.t("underlay_section"),
+        callback=_on_underlay_selected,
+        cancel_callback=lambda s, a: None,
+        width=700, height=440,
+        show=False, modal=True,
+    ):
+        dpg.add_file_extension(".*",    color=(200, 200, 200, 255), custom_text=i18n.t("file_filter_all"))
+        dpg.add_file_extension(".png",  color=(100, 200, 255, 255), custom_text=i18n.t("file_filter_image"))
+        dpg.add_file_extension(".jpg",  color=(100, 200, 255, 255), custom_text=i18n.t("file_filter_image"))
+        dpg.add_file_extension(".jpeg", color=(100, 200, 255, 255), custom_text=i18n.t("file_filter_image"))
 
     # ── Main window ───────────────────────────────────────────────────────────
     with dpg.window(
@@ -190,7 +222,11 @@ def build_ui() -> None:
                                 _tooltip(btn_ao, "Add object layer")
                             dpg.add_separator()
 
-                            with dpg.child_window(tag="layer_list", width=-1, height=-1, border=False):
+                            with dpg.child_window(tag="layer_list", width=-1, height=-150, border=False):
+                                pass
+
+                            with dpg.child_window(tag="underlay_panel", width=-1, height=140,
+                                                  border=False, no_scrollbar=True):
                                 pass
 
                     # ── MIDDLE: canvas + global fields ────────────────────────
@@ -224,16 +260,33 @@ def build_ui() -> None:
                                     tag="ui_style_header",
                                     default_open=True,
                                 ):
+                                    dpg.add_text(i18n.t("field_style_type"), tag="ui_text_style_type")
+                                    dpg.add_radio_button(
+                                        ["art", "photo"],
+                                        tag="style_mode_radio",
+                                        default_value="art",
+                                        horizontal=True,
+                                        callback=toolbar.on_style_mode_change,
+                                    )
                                     dpg.add_text(i18n.t("field_style_aesthetics"), tag="ui_text_style_aesthetics")
                                     dpg.add_input_text(tag="inp_style_aesthetics", width=-1, default_value="")
                                     dpg.add_text(i18n.t("field_style_lighting"), tag="ui_text_style_lighting")
                                     dpg.add_input_text(tag="inp_style_lighting", width=-1, default_value="")
-                                    dpg.add_text(i18n.t("field_style_art_style"), tag="ui_text_style_art_style")
-                                    dpg.add_input_text(tag="inp_style_art_style", width=-1, default_value="")
+                                    # photo field — shown only in photo mode (before medium)
+                                    dpg.add_text(i18n.t("field_style_photo"), tag="ui_text_style_photo", show=False)
+                                    dpg.add_input_text(tag="inp_style_photo", width=-1, default_value="", show=False)
                                     dpg.add_text(i18n.t("field_style_medium"), tag="ui_text_style_medium")
                                     dpg.add_input_text(tag="inp_style_medium", width=-1, default_value="")
+                                    # art_style field — shown only in art mode (after medium)
+                                    dpg.add_text(i18n.t("field_style_art_style"), tag="ui_text_style_art_style")
+                                    dpg.add_input_text(tag="inp_style_art_style", width=-1, default_value="")
                                     dpg.add_text(i18n.t("field_style_palette"), tag="ui_text_style_palette")
-                                    dpg.add_input_text(tag="inp_style_palette", width=-1, default_value="")
+                                    with dpg.group(horizontal=True) as _style_pal_group:
+                                        dpg.add_input_text(tag="inp_style_palette", width=-30, default_value="")
+                                        colorwidget.build_palette_button(
+                                            parent=_style_pal_group,
+                                            target_input_tag="inp_style_palette",
+                                        )
 
                                 dpg.add_text(i18n.t("field_background"), tag="ui_text_bg_label")
                                 dpg.add_input_text(

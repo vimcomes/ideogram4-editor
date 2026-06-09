@@ -4,6 +4,7 @@ import state
 import config
 import geometry
 import i18n
+import underlay
 
 
 def redraw() -> None:
@@ -17,6 +18,8 @@ def redraw() -> None:
         fill=(28, 28, 28, 255), color=(180, 180, 180, 255),
         thickness=2, parent="canvas_dl",
     )
+    underlay.draw_into_canvas()
+
     for p in [250, 500, 750]:
         gx = p / 1000 * cw
         gy = p / 1000 * ch
