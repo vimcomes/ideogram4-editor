@@ -14,6 +14,9 @@ from version import __version__
 dpg.create_context()
 theme.apply_theme()
 
+# Single persistent texture registry for all dynamic textures (underlay, etc.)
+dpg.add_texture_registry(tag="tex_reg")
+
 with dpg.font_registry():
     with dpg.font(config.FONT_PATH, 15) as default_font:
         dpg.add_font_range_hint(dpg.mvFontRangeHint_Cyrillic)
@@ -50,6 +53,8 @@ dpg.set_primary_window("main", True)
 dpg.maximize_viewport()
 
 toolbar.on_preset(None, state.PRESET_NAMES[3])
+import panels as _panels
+_panels.refresh_underlay_panel()
 
 # ── Render loop ───────────────────────────────────────────────────────────────
 _prev_dl       = (0, 0)
