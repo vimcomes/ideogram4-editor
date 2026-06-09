@@ -191,12 +191,12 @@ def refresh_props() -> None:
     def cb_pal(s, v):
         el["color_palette"] = [c.strip() for c in v.split(",") if c.strip()]
 
-    with dpg.group(horizontal=True, parent="props_group"):
+    with dpg.group(horizontal=True, parent="props_group") as _pal_group:
         pal_tag = f"prop_palette_{i}"
         dpg.add_input_text(
             tag=pal_tag,
             default_value=pal_str,
-            width=-1,
+            width=-30,
             callback=cb_pal,
         )
         def _make_pal_change(elem):
@@ -204,7 +204,7 @@ def refresh_props() -> None:
                 elem["color_palette"] = [c.strip() for c in new_val.split(",") if c.strip()]
             return _cb
         colorwidget.build_palette_button(
-            parent=dpg.last_container(),
+            parent=_pal_group,
             target_input_tag=pal_tag,
             on_change=_make_pal_change(el),
         )

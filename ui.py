@@ -281,10 +281,10 @@ def build_ui() -> None:
                                     dpg.add_text(i18n.t("field_style_art_style"), tag="ui_text_style_art_style")
                                     dpg.add_input_text(tag="inp_style_art_style", width=-1, default_value="")
                                     dpg.add_text(i18n.t("field_style_palette"), tag="ui_text_style_palette")
-                                    with dpg.group(horizontal=True):
-                                        dpg.add_input_text(tag="inp_style_palette", width=-1, default_value="")
+                                    with dpg.group(horizontal=True) as _style_pal_group:
+                                        dpg.add_input_text(tag="inp_style_palette", width=-30, default_value="")
                                         colorwidget.build_palette_button(
-                                            parent=dpg.last_container(),
+                                            parent=_style_pal_group,
                                             target_input_tag="inp_style_palette",
                                         )
 
