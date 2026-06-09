@@ -130,6 +130,11 @@ while dpg.is_dearpygui_running():
         except Exception:
             pass
 
+    if state.g_underlay_dirty:
+        state.g_underlay_dirty = False
+        import panels
+        panels.refresh_underlay_panel()
+
     dpg.render_dearpygui_frame()
 
 dpg.destroy_context()

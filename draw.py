@@ -13,13 +13,13 @@ def redraw() -> None:
     dpg.delete_item("canvas_dl", children_only=True)
     cw, ch, _ = geometry.canvas_dims()
 
-    underlay.draw_into_canvas()
-
     dpg.draw_rectangle(
         [0, 0], [cw, ch],
         fill=(28, 28, 28, 255), color=(180, 180, 180, 255),
         thickness=2, parent="canvas_dl",
     )
+    underlay.draw_into_canvas()
+
     for p in [250, 500, 750]:
         gx = p / 1000 * cw
         gy = p / 1000 * ch

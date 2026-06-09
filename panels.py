@@ -231,7 +231,7 @@ def refresh_underlay_panel() -> None:
     if ul["path"] is not None:
         def _remove(s, u):
             underlay.clear()
-            refresh_underlay_panel()
+            state.g_underlay_dirty = True
             draw.redraw()
 
         dpg.add_button(label=i18n.t("underlay_remove"), width=-1,

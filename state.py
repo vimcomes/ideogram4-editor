@@ -38,6 +38,7 @@ g_fields_h: int = 215        # fields_panel height, controlled by horizontal spl
 g_fields_h_init: bool = False  # True after first-frame init from real avail height
 g_split_dragging: bool = False
 g_split_prev_y:   float = 0.0
+g_underlay_dirty: bool = False   # set by callbacks; render loop rebuilds underlay panel
 
 # ── Resolution presets ────────────────────────────────────────────────────────
 with open(config.PRESETS_FILE) as _f:
