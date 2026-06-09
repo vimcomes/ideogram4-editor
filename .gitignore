@@ -24,3 +24,6 @@ prompts/
 
 # Analysis output
 graphify-out/
+
+# Local Claude Code settings (personal hooks)
+.claude/
