@@ -14,6 +14,15 @@ st: dict = {
     "draw_start": None,
     "pressed": False,
     "status": "",
+    "underlay": {
+        "path":        None,   # str | None — editor-only, never written to prompt JSON
+        "texture_tag": None,
+        "visible":     True,
+        "opacity":     0.5,
+        "fit":         "stretch",  # "stretch" | "crop"
+        "img_w":       0,
+        "img_h":       0,
+    },
 }
 
 # ── Canvas geometry globals (updated each render frame) ───────────────────────

@@ -4,6 +4,7 @@ import state
 import config
 import geometry
 import i18n
+import underlay
 
 
 def redraw() -> None:
@@ -11,6 +12,8 @@ def redraw() -> None:
         return
     dpg.delete_item("canvas_dl", children_only=True)
     cw, ch, _ = geometry.canvas_dims()
+
+    underlay.draw_into_canvas()
 
     dpg.draw_rectangle(
         [0, 0], [cw, ch],

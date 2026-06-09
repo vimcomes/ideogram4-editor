@@ -8,6 +8,7 @@ import handlers
 import toolbar
 import theme
 import ui
+from version import __version__
 
 # ── DPG init ──────────────────────────────────────────────────────────────────
 dpg.create_context()
@@ -38,7 +39,7 @@ dpg.bind_item_theme("splitter_h", _sp_normal)
 
 # ── Viewport setup ────────────────────────────────────────────────────────────
 dpg.create_viewport(
-    title="Ideogram4 Layout Editor",
+    title=f"Ideogram4 Layout Editor  v{__version__}",
     width=config.INIT_W, height=config.INIT_H,
     resizable=True, min_width=900, min_height=600,
 )
