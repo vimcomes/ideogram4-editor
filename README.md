@@ -25,6 +25,8 @@ Prompt files for both are in `examples/` — open them with File → Open to exp
 - Draw and resize `text` / `obj` bbox layers on a proportional canvas
 - Layer panel with reorder (↑↓), delete, multi-layer support
 - Properties panel: description, color palette, optional text content
+- **Color picker** (`◐`) — visual hex color selection for any palette field; chosen color is appended comma-separated
+- **Reference image underlay** — load a PNG/JPG reference under the canvas with adjustable opacity, stretch/crop fit, and visibility toggle (editor-only, never written to JSON)
 - **Photo / Art style toggle** — correct key order per Ideogram 4 schema
 - Undo / redo (`Ctrl+Z` / `Ctrl+Y`)
 - Save / load JSON, copy prompt to clipboard
@@ -54,10 +56,11 @@ run.bat           # Windows        (same auto-venv logic)
 
 1. **Choose resolution** — pick a preset from the top-left dropdown (e.g. `9:16 1168×1712`)
 2. **Add layers** — click `⊕T` to add a text layer or `⊕O` for an object layer, then draw a bbox on the canvas
-3. **Edit properties** — select a layer and fill in *Description*, *Text* (for text layers), and *Color palette* in the right panel
-4. **Fill style fields** — expand *Style description*, choose Art or Photo mode, fill in aesthetics / lighting / medium
-5. **Copy or save** — click `❐` to copy the JSON to clipboard, or `▽` to save to a file
-6. **Undo** — `Ctrl+Z` steps back one action at a time
+3. **Edit properties** — select a layer and fill in *Description*, *Text* (for text layers), and *Color palette* in the right panel; click `◐` to pick a color visually
+4. **Add reference underlay** (optional) — click *Add* in the Underlay section of the left panel to load a PNG/JPG reference image under the canvas; adjust opacity and fit mode as needed
+5. **Fill style fields** — expand *Style description*, choose Art or Photo mode, fill in aesthetics / lighting / medium
+6. **Copy or save** — click `❐` to copy the JSON to clipboard, or `▽` to save to a file
+7. **Undo** — `Ctrl+Z` steps back one action at a time
 
 **Tips:**
 - Drag the horizontal bar between canvas and style fields to resize them
@@ -103,7 +106,7 @@ run.bat           # Windows        (same auto-venv logic)
 
 ```bash
 pip install -r requirements-dev.txt
-python -m pytest -q          # 50 tests
+python -m pytest -q          # 68 tests
 ```
 
 ## Architecture
@@ -115,12 +118,15 @@ python -m pytest -q          # 50 tests
 | `handlers.py` | Mouse FSM (press → drag → release) + keyboard |
 | `toolbar.py` | Toolbar callbacks: add layer, new document, presets, i18n |
 | `ui.py` | DPG window layout (3-column: layers \| canvas+fields \| properties) |
-| `panels.py` | Layer list + properties panel |
+| `panels.py` | Layer list + properties panel + underlay panel |
 | `draw.py` | Drawlist rendering |
+| `colorwidget.py` | Color picker button and shared modal picker |
+| `underlay.py` | Reference image underlay (load, draw, fit modes) |
 | `prompt_io.py` | Save/load JSON, clipboard, overwrite confirmation |
 | `history.py` | Undo/redo |
 | `theme.py` | Global dark theme (Catppuccin Mocha) |
 | `i18n.py` | RU/EN strings |
+| `version.py` | App version (`__version__`) |
 | `main.py` | Entry point + render loop |
 
 ## License
