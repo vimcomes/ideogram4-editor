@@ -135,6 +135,9 @@ while dpg.is_dearpygui_running():
         except Exception:
             pass
 
+    import native_dialog as _nd
+    _nd.flush()
+
     import underlay as _ul
     _ul.flush_deletes()
 
