@@ -5,6 +5,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.2.1] — 2026-06-10
+
+### Fixed
+- **Native file dialogs** — replaced DearPyGui's built-in file dialog with native OS dialogs (GTK on Linux, Win32 on Windows, Cocoa on macOS) via `tkinter.filedialog`. Fixes clipboard paste crash (`X11: Failed to convert selection to string`) and broken path input in all three dialogs: open prompt, save prompt, underlay image. DPG dialog kept as automatic fallback if tkinter is unavailable.
+
+---
+
 ## [0.2.0] — 2026-06-09
 
 ### Added
