@@ -31,8 +31,6 @@ Prompt files for both are in `examples/` — open them with File → Open to exp
 
 ![v0.2.0 — color picker and underlay](assets/screenshot_v0.2.0.png)
 - **Native OS file dialogs** — open/save/underlay use the system dialog (GTK on Linux, Win32 on Windows)
-
-![v0.2.1 — layers, underlay, style fields](assets/screenshot_v0.2.1.png)
 - **Photo / Art style toggle** — correct key order per Ideogram 4 schema
 - Undo / redo (`Ctrl+Z` / `Ctrl+Y`)
 - Save / load JSON, copy prompt to clipboard
