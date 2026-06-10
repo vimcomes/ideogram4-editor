@@ -222,8 +222,20 @@ def refresh_underlay_panel() -> None:
     dpg.add_separator(parent="underlay_panel")
 
     def _open_dlg(s, u):
-        if dpg.does_item_exist("underlay_dlg"):
-            dpg.show_item("underlay_dlg")
+        import native_dialog
+        import os
+        native_dialog.open_file(
+            title=i18n.t("underlay_section"),
+            filetypes=[("Images", "*.png *.jpg *.jpeg"), ("All files", "*")],
+            initial_dir=os.path.expanduser("~"),
+            on_done=_load_underlay,
+            fallback_tag="underlay_dlg",
+        )
+
+    def _load_underlay(path: str) -> None:
+        underlay.load(path)
+        state.g_underlay_dirty = True
+        draw.redraw()
 
     dpg.add_button(label=i18n.t("underlay_add"), width=-1,
                    callback=_open_dlg, parent="underlay_panel")

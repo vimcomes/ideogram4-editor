@@ -1,4 +1,5 @@
 """ui.py — builds the DPG window, dialogs, and three-column table layout."""
+import os
 import dearpygui.dearpygui as dpg
 import state
 import config
@@ -8,27 +9,41 @@ import i18n
 import colorwidget
 import underlay as _underlay
 import panels
+import native_dialog
 
 
-def _open_file(s, u):
-    if dpg.does_item_exist("open_dlg"):
-        dpg.show_item("open_dlg")
-
-
-def _save_file(s, u):
-    if dpg.does_item_exist("save_dlg"):
-        dpg.show_item("save_dlg")
-
-
-def _on_underlay_selected(sender, app_data):
+def _on_underlay_fallback(sender, app_data):
+    """DPG fallback callback for underlay_dlg (used when tkinter is unavailable)."""
     selections = app_data.get("selections", {})
     path = next(iter(selections.values())) if selections else app_data.get("file_path_name", "")
-    if not path:
+    if not path or not os.path.isfile(path):
         return
     _underlay.load(path)
     panels.refresh_underlay_panel()
     import draw
     draw.redraw()
+
+
+def _open_file(s, u):
+    native_dialog.open_file(
+        title=i18n.t("dialog_open_title"),
+        filetypes=[("JSON", "*.json"), ("Text", "*.txt"), ("All files", "*")],
+        initial_dir=config.PROMPTS_DIR,
+        on_done=prompt_io.open_file,
+        fallback_tag="open_dlg",
+    )
+
+
+def _save_file(s, u):
+    native_dialog.save_file(
+        title=i18n.t("dialog_save_title"),
+        filetypes=[("JSON", "*.json"), ("All files", "*")],
+        initial_dir=config.PROMPTS_DIR,
+        default_ext=".json",
+        default_name="prompt.json",
+        on_done=prompt_io.save_file,
+        fallback_tag="save_dlg",
+    )
 
 
 
@@ -130,7 +145,7 @@ def build_ui() -> None:
     with dpg.file_dialog(
         tag="underlay_dlg",
         label=i18n.t("underlay_section"),
-        callback=_on_underlay_selected,
+        callback=_on_underlay_fallback,
         cancel_callback=lambda s, a: None,
         width=700, height=440,
         show=False, modal=True,

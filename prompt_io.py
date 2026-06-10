@@ -112,10 +112,9 @@ def copy_to_clipboard(s, u):
         state.set_status(i18n.t("status_error", err=e))
 
 
-def on_open_selected(sender, app_data):
-    import history  # avoid top-level circular; history ← state only
-    selections = app_data.get("selections", {})
-    path = next(iter(selections.values())) if selections else app_data.get("file_path_name", "")
+def open_file(path: str) -> None:
+    """Load a prompt file. Called from native dialog callback (main thread)."""
+    import history
     if not path or not os.path.isfile(path):
         state.set_status(i18n.t("status_no_file"))
         return
@@ -125,6 +124,13 @@ def on_open_selected(sender, app_data):
         state.set_status(i18n.t("status_opened", name=os.path.basename(path), count=len(state.st["elements"])))
     except Exception as e:
         state.set_status(i18n.t("status_error_open", err=e))
+
+
+def on_open_selected(sender, app_data):
+    """DPG fallback callback for open_dlg."""
+    selections = app_data.get("selections", {})
+    path = next(iter(selections.values())) if selections else app_data.get("file_path_name", "")
+    open_file(path)
 
 
 _pending_save_path: str = ""
@@ -182,12 +188,20 @@ def _resolve_save_path(app_data: dict) -> str:
     return path
 
 
-def on_save_selected(sender, app_data):
-    path = _resolve_save_path(app_data)
+def save_file(path: str) -> None:
+    """Save prompt to path. Called from native dialog callback (main thread)."""
     if not path:
         state.set_status(i18n.t("status_no_path"))
         return
+    if not path.endswith(".json"):
+        path += ".json"
     if os.path.isfile(path):
         _show_overwrite_confirm(path)
     else:
         _do_save(path)
+
+
+def on_save_selected(sender, app_data):
+    """DPG fallback callback for save_dlg."""
+    path = _resolve_save_path(app_data)
+    save_file(path)

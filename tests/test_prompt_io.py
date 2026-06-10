@@ -398,3 +398,78 @@ def test_on_save_no_path_sets_status():
         prompt_io.on_save_selected(None, {"selections": {}, "file_path_name": ""})
     assert captured
     assert i18n.t("status_no_path") in captured[0]
+
+
+# ── open_file (native dialog entrypoint) ───────────────────────────────────────
+
+def test_open_file_missing_sets_status():
+    captured = []
+    with patch.object(state, "set_status", lambda m: captured.append(m)):
+        prompt_io.open_file("/nonexistent/file.json")
+    assert captured
+    assert i18n.t("status_no_file") in captured[0]
+
+
+def test_open_file_loads_file():
+    import dearpygui.dearpygui as dpg
+    data = {
+        "high_level_description": "native open test",
+        "style_description": {"aesthetics": "brutalism"},
+        "compositional_deconstruction": {
+            "background": "concrete",
+            "elements": [{"type": "obj", "bbox": [0, 0, 500, 500], "desc": "pillar"}],
+        },
+    }
+    with tempfile.NamedTemporaryFile(suffix=".json", mode="w",
+                                     delete=False, encoding="utf-8") as f:
+        json.dump(data, f)
+        path = f.name
+    try:
+        set_calls: dict = {}
+        dpg.set_value.side_effect = lambda tag, val: set_calls.update({tag: val})
+        state.st["elements"] = []
+
+        import panels, history
+        with patch.object(panels, "refresh_all", lambda: None), \
+             patch.object(history, "push_history", lambda: None):
+            prompt_io.open_file(path)
+
+        assert set_calls.get("inp_high") == "native open test"
+        assert set_calls.get("inp_style_aesthetics") == "brutalism"
+        assert len(state.st["elements"]) == 1
+        assert state.st["elements"][0]["desc"] == "pillar"
+    finally:
+        os.unlink(path)
+
+
+# ── save_file (native dialog entrypoint) ───────────────────────────────────────
+
+def test_save_file_empty_path_sets_status():
+    captured = []
+    with patch.object(state, "set_status", lambda m: captured.append(m)):
+        prompt_io.save_file("")
+    assert captured
+    assert i18n.t("status_no_path") in captured[0]
+
+
+def test_save_file_appends_json_extension():
+    import dearpygui.dearpygui as dpg
+    dpg.get_value.side_effect = lambda tag: ""
+    state.st["elements"] = []
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        target = os.path.join(tmpdir, "myfile")
+        prompt_io.save_file(target)
+        assert os.path.exists(target + ".json")
+
+
+def test_save_file_writes_json():
+    import dearpygui.dearpygui as dpg
+    dpg.get_value.side_effect = lambda tag: ""
+    state.st["elements"] = []
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        target = os.path.join(tmpdir, "out.json")
+        prompt_io.save_file(target)
+        content = json.loads(open(target).read())
+        assert "high_level_description" in content
