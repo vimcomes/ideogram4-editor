@@ -29,7 +29,7 @@ Prompt files for both are in `examples/` — open them with File → Open to exp
 - **Color picker** (`◐`) — visual hex color selection for any palette field; chosen color is appended comma-separated
 - **Reference image underlay** — load a PNG/JPG reference under the canvas with adjustable opacity, stretch/crop fit, and visibility toggle (editor-only, never written to JSON)
 
-![v0.2.0 — color picker and underlay](assets/screenshot_v0.2.0.png)
+![v0.2.1 — layers, underlay, style fields](assets/screenshot_v0.2.1.png)
 - **Photo / Art style toggle** — correct key order per Ideogram 4 schema
 - Undo / redo (`Ctrl+Z` / `Ctrl+Y`)
 - Save / load JSON, copy prompt to clipboard
